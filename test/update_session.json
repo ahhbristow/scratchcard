@@ -1,0 +1,8 @@
+{
+	"id": 1,
+	"name":"Settlement Priority",
+	"cards": [
+		{"name":1, "x": 500, "y": 0, "type": "story"},
+		{"name":2, "x": 500, "y": 0, "type": "example"}
+	]
+}

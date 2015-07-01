@@ -1,0 +1,17 @@
+
+<div id="content">
+	<div id="header">
+		<h1>{{session.name}}</h1>
+	</div>
+	<div id="cards">
+		<div class="card" ng-repeat="card in session.cards" draggable x="card.x" y="card.y" ng-style="{top:card.y,left:card.x}" ng-dblclick="deleteCard(card, $event)">
+			<textarea class="{{card.type}}" ng-change="updateText()" ng-blur="saveCard()" ng-model="card.text"></textarea>
+		</div>
+	</div>
+</div>
+<div id="control_bar">
+	<button class="question" ng-click="addCard('question')">Question</button>
+	<button class="story" ng-click="addCard('story')">Story</button>
+	<button class="rule" ng-click="addCard('rule')">Rule</button>
+	<button class="example" ng-click="addCard('example')">Example</button>
+</div>

@@ -1,0 +1,13 @@
+
+<div id="content">
+	<div id="header">
+		<h1>Sessions</h1>
+	</div>
+	<div class="session" ng-repeat="session in sessions" >
+		<p><a href="#/sessions/{{session._id}}">{{session.name}}</a></p>
+	</div>
+</div>
+<div id="control_bar">
+	<input id="new_session_name" type="text" ng-model="new_session.name"/>
+	<button ng-click="addSession()">New Session</button>
+</div>
