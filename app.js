@@ -81,10 +81,13 @@ app.get('/', function(req, res,next) {
 	res.sendFile(__dirname + '/views/index.html');
 });
 
+
+// =========================================================
+// Menu level routes
+
 /* GET /sessions
  *
  * Retrieves a list of sessions
- *
  */
 app.get('/sessions', function(req, res, next) {
 
@@ -95,7 +98,29 @@ app.get('/sessions', function(req, res, next) {
   });
 });
 
-/* GET /sessions/id */
+
+/* POST /sessions
+ *
+ * Adds a new session
+ */
+app.post('/sessions', function(req, res, next) {
+  console.log("BODY: " + JSON.stringify(req.body));
+
+  Session.create(req.body, function (err, post) {
+    if (err) return next(err);
+    res.json(post);
+  });
+});
+
+
+
+// =========================================================
+// Individual session routes
+
+/* GET /sessions/id 
+ *
+ *
+ */
 app.get('/sessions/:id', function(req, res, next) {
   Session.findById(req.params.id, function (err, post) {
 	if (err) return next(err);
@@ -104,23 +129,29 @@ app.get('/sessions/:id', function(req, res, next) {
   });
 });
 
-/* POST /sessions */
-app.post('/sessions', function(req, res, next) {
-   console.log("BODY: " + JSON.stringify(req.body));
-
-  Session.create(req.body, function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-});
-
-/* PUT /sessions/:id */
+/* PUT /sessions/:id 
+ *
+ * Update a session
+ */
 app.put('/sessions/:id', function(req, res, next) {
   Session.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
     if (err) return next(err);
     res.json(post);
   });
 });
+
+/* DELETE /session/id
+ *
+ * Deletes the specified session
+ */
+app.delete('/sessions/:id', function (req, res, next) {
+  Session.findByIdAndRemove(req.params.id, function (err, post) {
+    if (err) return next(err);
+    res.json('{"msg": "success"}');
+  });
+});
+
+
 
 // Receive socket connection
 io.on('connection', function(client) {  

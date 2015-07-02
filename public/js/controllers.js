@@ -8,11 +8,21 @@ var cardsControllers = angular.module('cardsControllers', []);
  * CardsCtrl - controller for a particular session
  *
  */
-cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','socket',function ($scope,$http,$routeParams,socket) {
+cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$location','socket',function ($scope,$http,$routeParams,$location,socket) {
 
 	// Init
 	$scope.session_id = $routeParams.sessionId;
 	$scope.session = {};
+
+
+	// Delete session and redirect to main page
+	$scope.deleteSession = function() {
+		$http.delete("/sessions/" + $scope.session_id).success(function (response) {
+			console.log(response);
+			$location.path('/sessions');
+		});
+		
+	}
 
 	$scope.deleteCard = function(card, event) {
 		// CTRL key must be pressed to do deletion
@@ -71,7 +81,6 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','socke
 	// Too much data
 	$scope.syncSession=function() {
 		var session_details = $scope.session;
-		console.log("Registering move " + JSON.stringify(session_details));
 		socket.emit('move', {
 			session_id:       $scope.session_id,
 			session_details:  session_details
@@ -89,9 +98,12 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','socke
 	socket.on('sync', function(msg) {
 		var session_id = msg.session_id;
 		var session_details = msg.session;
-		console.log("Received sync message: " + session_details);
+		console.log("Scope: " + $scope.session_id);
+		console.log("Received: " + msg.session_id);
 
-		if ($scope.session_id = session_id) {
+		console.log("Received sync for: " + session_details.name);
+		if ($scope.session_id == session_id) {
+			console.log("Processed it...");
 			$scope.session = session_details;
 		}
 	});

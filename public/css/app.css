@@ -52,6 +52,9 @@ textarea {
 #control_bar button {
 	padding: 5px;
 }
+#control_bar button.delete {
+	float: right;
+}
 
 .story {
 	background-color: rgb(255, 255, 111);
