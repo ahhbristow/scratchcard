@@ -4,7 +4,7 @@
 
 cardsApp.factory('socket', function ($rootScope) {
 	console.log($rootScope);
-	var socket = io.connect('http://lp01799.openbet:4072');
+	var socket = io.connect('');
 	return {
 		on: function (eventName, callback) {
 			socket.on(eventName, function () {

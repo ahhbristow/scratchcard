@@ -32,7 +32,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','socke
 		$scope.writeSession();
 	}
 	$scope.getCards = function(session_id) {
-		$http.get("http://lp01799.openbet:4072/sessions/" + session_id).success(function (response) {
+		$http.get("/sessions/" + session_id).success(function (response) {
 			$scope.session = response;
 		});
 	}
@@ -131,7 +131,7 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 	$scope.sessions = [];
 	
 	$scope.getSessions = function() {
-		$http.get("http://lp01799.openbet:4072/sessions").success(function (response) {
+		$http.get("/sessions").success(function (response) {
 			$scope.sessions = response;
 			console.log("Sessions: " + JSON.stringify(response));
 		});
