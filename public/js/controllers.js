@@ -98,12 +98,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	socket.on('sync', function(msg) {
 		var session_id = msg.session_id;
 		var session_details = msg.session;
-		console.log("Scope: " + $scope.session_id);
-		console.log("Received: " + msg.session_id);
-
-		console.log("Received sync for: " + session_details.name);
 		if ($scope.session_id == session_id) {
-			console.log("Processed it...");
 			$scope.session = session_details;
 		}
 	});
