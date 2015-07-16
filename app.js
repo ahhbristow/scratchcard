@@ -9,7 +9,7 @@ var bodyParser = require('body-parser');
 // ====== DB initialise =======
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/sessions', function(err) {
+mongoose.connect(process.env.MONGOLAB_URI, function(err) {
     if(err) {
         console.log('connection error', err);
     } else {
@@ -54,15 +54,9 @@ server.listen(4072);
 app.sync_session = function(session_id) {
 
     var session_details = app.locals.sessions[session_id];
-    console.log("Syncing session: " + JSON.stringify(session_details));
     Session.findByIdAndUpdate(session_id, session_details, function (err, updated_session) {
       if (err) return next(err);
-      console.log("Updated session: " + updated_session);
 		
-     
-      // Broadcast the updated session for all
-      // clients to sync on
-      console.log("Broadcasting session " + session_id); 
       io.emit('sync', {
 	      "session_id": session_id,
 	      "session": session_details
