@@ -54,12 +54,10 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	
 	// Tells the server to write what it has to the DB
 	$scope.writeSession = function() {
-		console.log("Synchronising...");
 		socket.emit('move_end', {
 		   session_id: $scope.session_id
 		}, function (result) {
 		      if (!result) {
-		         console('There was an error registering move_end');
 		      }
 		   }
 		);
@@ -86,7 +84,6 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 			session_details:  session_details
 		}, function (result) {
 			if (!result) {
-				console('There was an error registering move');
 			}
 		});
 	}
@@ -132,7 +129,6 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
  */
 cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','socket',function ($scope,$http,$routeParams,socket) {
 
-	console.log("Sessions controller");
 
 	// Build a list of all sessions and display them
 	$scope.sessions = [];

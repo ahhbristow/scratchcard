@@ -27,7 +27,6 @@ cardsApp.directive('draggable', function() {
 					var container = $(element).parent().parent();
 					var element_x = $(element).offset().left;
 					var current_min_width = parseInt($(container).css('min-width'));
-					console.log("current: " + current_min_width + ", left: " + element_x);
 					if (element_x > current_min_width) {
 						container.css({'min-width' : element_x});
 					}
