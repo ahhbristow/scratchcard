@@ -9,7 +9,7 @@ var bodyParser = require('body-parser');
 // ====== DB initialise =======
 
 var mongoose = require('mongoose');
-var mongo_uri = process.env.MONGOLAB_URL || "mongodb://localhost/sessions";
+var mongo_uri = process.env.MONGOLAB_URI || "mongodb://localhost/sessions";
 mongoose.connect(mongo_uri, function(err) {
     if(err) {
         console.log('connection error', err);
