@@ -25,7 +25,10 @@ mongoose.connect(mongo_uri, function(err) {
 
 var app = express();
 var server = require('http').createServer(app);  
+
+
 var io = require('socket.io')(server);
+io.set('transports', ['websocket']);
 
 var Session = require(__dirname + '/models/session.js');
 

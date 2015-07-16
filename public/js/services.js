@@ -4,7 +4,8 @@
 
 cardsApp.factory('socket', function ($rootScope) {
 	console.log($rootScope);
-	var socket = io.connect('');
+	var socket = io.connect('',{transports: ['websocket']});
+
 	return {
 		on: function (eventName, callback) {
 			socket.on(eventName, function () {
