@@ -42,7 +42,7 @@ app.use('/static', express.static('public'));
 
 
 // Set up a httpserver on port 4072
-server.listen(4072); 
+server.listen(process.env.PORT || 4072); 
 
 /* =========== Other functions ============== */
 
