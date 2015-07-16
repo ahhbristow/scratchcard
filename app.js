@@ -9,7 +9,8 @@ var bodyParser = require('body-parser');
 // ====== DB initialise =======
 
 var mongoose = require('mongoose');
-mongoose.connect(process.env.MONGOLAB_URI, function(err) {
+var mongo_uri = process.env.MONGOLAB_URL || "mongodb://localhost/sessions";
+mongoose.connect(mongo_uri, function(err) {
     if(err) {
         console.log('connection error', err);
     } else {
@@ -42,7 +43,8 @@ app.use('/static', express.static('public'));
 
 
 // Set up a httpserver on port 4072
-server.listen(process.env.PORT || 4072); 
+var port = process.env.PORT || 4072;
+server.listen(port); 
 
 /* =========== Other functions ============== */
 
