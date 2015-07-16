@@ -100,7 +100,6 @@ app.get('/sessions', function(req, res, next) {
  * Adds a new session
  */
 app.post('/sessions', function(req, res, next) {
-  console.log("BODY: " + JSON.stringify(req.body));
 
   Session.create(req.body, function (err, post) {
     if (err) return next(err);
@@ -120,7 +119,6 @@ app.post('/sessions', function(req, res, next) {
 app.get('/sessions/:id', function(req, res, next) {
   Session.findById(req.params.id, function (err, post) {
 	if (err) return next(err);
-	console.log(post);
 	res.json(post);
   });
 });
@@ -167,7 +165,6 @@ io.on('connection', function(client) {
     // Client will send a move_end message once
     // dragging has stopped.  We sync at this point
     client.on('move_end', function(data) {
-       console.log("Saving session to DB");
        var session_id = data.session_id;
        app.sync_session(session_id);
     });
@@ -175,7 +172,6 @@ io.on('connection', function(client) {
     // Update the session 
     client.on('move', function(data) {
         app.locals.sessions[data.session_id] = data.session_details;
-	console.log("Updating to: " + JSON.stringify(data.session_details));
         io.emit('sync', {
 	  "session_id": data.session_id,
 	  "session": data.session_details
