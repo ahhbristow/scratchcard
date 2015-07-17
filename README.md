@@ -26,8 +26,8 @@ sudo docker run --name cards_db -d mongo
 
 
 # 2.  Start the NodeJS server in the background (-d option)
-sudo docker pull lon1vtp32.int.openbet.com:5000/sbristow/cards_server
-sudo docker run -d -p 4072:4072 --name cards_app --link cards_db:mongo lon1vtp32.int.openbet.com:5000/sbristow/cards_server
+sudo docker pull [DOCKER_REPO_HOST]
+sudo docker run -d -p 4072:4072 --name cards_app --link cards_db:mongo [DOCKER_REPO_HOST]
 
 You should now be able to access the cards app at:
 
