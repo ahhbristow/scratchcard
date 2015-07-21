@@ -175,7 +175,7 @@ io.on('connection', function(client) {
     // Update the session 
     client.on('move', function(data) {
         app.locals.sessions[data.session_id] = data.session_details;
-        io.emit('sync', {
+        client.broadcast.emit('sync', {
 	  "session_id": data.session_id,
 	  "session": data.session_details
         });
