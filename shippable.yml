@@ -5,3 +5,6 @@ language: node_js
 node_js:
     - 0.10.25
     - 0.11
+
+after_success :
+          - git push -f git@heroku.com:salty-basin-2309.git master
