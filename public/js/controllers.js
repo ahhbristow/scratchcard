@@ -34,9 +34,8 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 			$scope.writeSession();
 		}
 	}
-	$scope.addCard = function(card_type) {
-		console.log("Adding new card");
-		var card = {text: "", x: 100, y: 100, type: card_type};
+	$scope.addCard = function(card_type, event) {
+		var card = {text: "", x: event.pageX, y: event.pageY-300, type: card_type};
 		this.session.cards.push(card);
 		$scope.syncSession();
 		$scope.writeSession();
