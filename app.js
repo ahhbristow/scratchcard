@@ -28,15 +28,22 @@ var server = require('http').createServer(app);
 var Session = require(__dirname + '/models/session.js');
 var User = require(__dirname + '/models/user.js');
 
-// ===== Configuring Passport ====
+// Configure Sessions
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+var SessionStore = new MongoStore({                                                                                    
+	url: mongo_uri
+});
+
+app.use(cookieParser());
+app.use(session({
+	store: SessionStore,
+	secret: 'billythefish'
+}));
+
+// Configure Passport
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-
-app.use(require('express-session')({
-	    secret: 'billythefish',
-	    resave: false,
-	    saveUninitialized: false
-}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -44,10 +51,28 @@ passport.use(new LocalStrategy(User.authenticate()));passport.serializeUser(User
 passport.deserializeUser(User.deserializeUser());
 
 
-// Configure Socket IO
+
+// =========== Configure Socket IO =======================
 var io = require('socket.io')(server);
 io.set('transports', ['websocket']);
 
+// Socket auth
+var passportSocketIo = require("passport.socketio");
+io.use(passportSocketIo.authorize({
+  cookieParser: cookieParser,       // the same middleware you registrer in express
+  key:          'connect.sid',       // the name of the cookie where express/connect stores its session_id
+  secret:       'billythefish',    // the session_secret to parse the cookie
+  store:        SessionStore,        // we NEED to use a sessionstore. no memorystore please
+  success:      onAuthorizeSuccess,  // *optional* callback on success - read more below
+  fail:         onAuthorizeFail,     // *optional* callback on fail/error - read more below
+}));
+
+function onAuthorizeSuccess() {
+	console.log('SUCCESSFUL connection to socket.io');
+}
+function onAuthorizeFail() {
+	console.log('FAILED connection to socket.io');
+}
 
 // View engine setup.  Uses EJS
 app.set('views', path.join(__dirname, 'views'));
@@ -58,7 +83,6 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use('/static', express.static('public'));
 
 
