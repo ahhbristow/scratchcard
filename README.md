@@ -46,3 +46,12 @@ sudo docker exec -it cards_db /bin/bash
 - The app won't reconnect to the DB if it wasn't available at startup.  You must ensure the DB is running before starting the cards_app container.
 - There is a silly amount of logging to STDOUT and the browser console at the moment.  May cause a bit of a performance issue.
 - THIS IS A BETA VERSION OF THE APP, THERE MAY BE BUGS!
+
+
+
+# TODO
+- Failed login
+- Add scenarios and tests.
+- Reduce bandwidth usage by not sending full JSON on every update.  Save deltas for that card and write on move end (sync then save)
+- Add back button (easy) with nice scroll.  Will need to load all content first then replace
+- Add logout button (toolbar)

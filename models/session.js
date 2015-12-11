@@ -7,10 +7,10 @@ var CardSchema = new mongoose.Schema({
 	type: String
 });
 
-var SessionSchema = new mongoose.Schema({
+var CardsSessionSchema = new mongoose.Schema({
 	id: Number,
     	name: String,
 	cards: [CardSchema]
 });
 
-module.exports = mongoose.model('Session', SessionSchema);
+module.exports = mongoose.model('CardsSession', CardsSessionSchema);

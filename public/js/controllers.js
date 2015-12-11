@@ -53,13 +53,17 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	
 	// Tells the server to write what it has to the DB
 	$scope.writeSession = function() {
+		console.log("Sending move_end")
 		socket.emit('move_end', {
 		   session_id: $scope.session_id
 		}, function (result) {
-		      if (!result) {
-		      }
-		   }
-		);
+			if (!result) {
+		      		console.log("ERROR");
+			}
+			console.log(result);
+		}
+	);
+
 	}
 	$scope.dragMove = function() {
 		$scope.syncSession();
@@ -76,6 +80,8 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 
 	// TODO: Send only the card, don't serialise the session.
 	// Too much data
+	// Sends the entire cards JSON back to the server to be updated
+	// in server memory
 	$scope.syncSession=function() {
 		var session_details = $scope.session;
 		socket.emit('move', {
@@ -83,7 +89,9 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 			session_details:  session_details
 		}, function (result) {
 			if (!result) {
+				console.log("Error emitting 'move'");
 			}
+			console.log(result);
 		});
 	}
 

@@ -4,10 +4,10 @@
 		<h1>Three Amigo Sessions</h1>
 	</div>
 	<div class="session" ng-repeat="session in sessions" >
-		<p><a href="#/sessions/{{session._id}}">{{session.name}}</a></p>
+		<p><a id="session_{{session._id}}" href="#/sessions/{{session._id}}">{{session.name}}</a></p>
 	</div>
 </div>
 <div id="control_bar">
 	<input id="new_session_name" type="text" ng-model="new_session.name"/>
-	<button ng-click="addSession()">New Session</button>
+	<button id="add_session" ng-click="addSession()">New Session</button>
 </div>

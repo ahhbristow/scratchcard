@@ -1,5 +1,5 @@
 describe('Load session', function() {
-	it('should show the same set of cards on both browsers', function() {
+	it('should show the new card on the second browser', function() {
 		var browser2 = browser.forkNewDriverInstance();
 		var element2 = browser2.element;
 

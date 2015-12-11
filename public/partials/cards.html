@@ -1,7 +1,7 @@
 
 <div id="content">
 	<div id="header">
-		<h1>{{session.name}}</h1>
+		<h1 id="session_name">{{session.name}}</h1>
 	</div>
 	<div id="cards">
 		<div class="card" ng-repeat="card in session.cards" draggable x="card.x" y="card.y" ng-style="{top:card.y,left:card.x}" ng-dblclick="deleteCard(card, $event)">
@@ -10,7 +10,7 @@
 	</div>
 </div>
 <div id="control_bar">
-	<button class="question" ng-click="addCard('question', $event)">Question</button>
+	<button id="question" class="question" ng-click="addCard('question', $event)">Question</button>
 	<button class="story" ng-click="addCard('story', $event)">Story</button>
 	<button class="rule" ng-click="addCard('rule', $event)">Rule</button>
 	<button class="example" ng-click="addCard('example', $event)">Example</button>
