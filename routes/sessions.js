@@ -11,10 +11,6 @@ var auth = require(__dirname + '/../middleware/auth');
 
 module.exports = function(passport) {
 
-	// Get the login middleware function.
-	// TODO: Should this go here?
-	var login = require(__dirname + '/../middleware/login')(passport);
-
 	// Get home page (list of sessions)
 	router.get('/', auth, function(req, res, next) {
 		res.render('pages/index');
