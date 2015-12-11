@@ -33,19 +33,18 @@ module.exports = function(passport) {
 		res.redirect('/login');
 	});
 
-	// Get registration page
-	router.get('/register', function(req, res, next) {
-		res.render('register');
-	});
 
 	// Perform new registration
-	router.post('/register', function(req, res) {
-		User.register(new User({ username : req.body.username }), req.body.password, function(err, account) {
+	// TODO: Move to middleware
+	router.post('/register', function(req, res, next) {
+		User.register(new User({ username : req.body.username }), req.body.password, function(err, user) {
 			if (err) {
-				return res.render('register', {user:user});
+				console.log("Registration error: " + err);
+				return res.render('pages/login');
 			}
-
+			console.log("Registration successful, redirecting to sessions");
 			passport.authenticate('local')(req, res, function () {
+				
 				res.redirect('/');
 			});
 		});
@@ -71,9 +70,14 @@ module.exports = function(passport) {
 
 	// Get a session as JSON
 	router.get('/sessions/:id', auth, function(req, res, next) {
-		CardsSession.findById(req.params.id, function (err, post) {
+		CardsSession.findById(req.params.id, function (err, data) {
 			if (err) return next(err);
-			res.json(post);
+
+			var resp = {};
+			resp.user = req.user;
+			resp.session = data;
+			console.log(resp);
+			res.json(resp);
 		});
 	});
 

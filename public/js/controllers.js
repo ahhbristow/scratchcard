@@ -40,9 +40,12 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		$scope.syncSession();
 		$scope.writeSession();
 	}
+
+	// Initial retrieval of cards
 	$scope.getCards = function(session_id) {
 		$http.get("/sessions/" + session_id).success(function (response) {
-			$scope.session = response;
+			$scope.user = response.user;
+			$scope.session = response.session;
 		});
 	}
 	$scope.getCards($scope.session_id);
