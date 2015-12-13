@@ -2,7 +2,36 @@
 
 * {
 	font-family: 'Roboto Slab', serif;
-	font-size: 20px;
+	font-size: 15px;
+}
+
+body {
+}
+
+button {
+	color: black;
+}
+
+#title {
+	font-size: 80px;
+	text-align: center;
+}
+
+.spacer {
+	clear: both;
+}
+
+#menu_bar, #control_bar {
+	/*background-color: #00A818;*/
+	background-color: #999;
+	padding: 5px;
+	color: white;
+}
+#menu_bar #username {
+	float: right;
+}
+#logout {
+	float: right;
 }
 
 #content {
@@ -41,9 +70,7 @@ textarea {
 	position: fixed;
 	bottom: 0px;
 	padding: 10px;
-	background-color: rgb(132, 132, 132);
 	width: 100%;
-	font-size: 20px;
 }
 
 #control_bar input {
@@ -51,9 +78,15 @@ textarea {
 }
 #control_bar button {
 	padding: 5px;
+	width: 80px;
+	color: black;
+}
+#control_bar #add_session {
+	width: 150px;
 }
 #control_bar button.delete {
 	float: right;
+	width: 150px;
 }
 #control_bar .tip {
 	color: white;

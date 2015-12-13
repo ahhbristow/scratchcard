@@ -1,3 +1,11 @@
+<div id="menu_bar">
+	<div id="logout">
+		<div id="username">{{user.username}}</div>
+		<button id="logout" ng-click="logout()">Logout</button>
+	</div>
+	<div class="spacer"></div>
+</div>
+
 
 <div id="content">
 	<div id="header">
@@ -16,6 +24,7 @@
 	<button class="example" ng-click="addCard('example', $event)">Example</button>
 	
 	<span class="tip">Tip: Hold 'Ctrl' and double-click a card to delete it!</span>
+	<span>{{user.username}}</span>
 
 	<button class="delete" ng-click="deleteSession()">Delete Session</button>
 </div>

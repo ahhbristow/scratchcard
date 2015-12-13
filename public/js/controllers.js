@@ -130,6 +130,10 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		}
 	}
 
+	$scope.logout = function() {
+		console.log("Logging out");
+		window.location.href = "/logout";
+	}
 
 }]);
 
@@ -146,7 +150,8 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 	
 	$scope.getSessions = function() {
 		$http.get("/sessions").success(function (response) {
-			$scope.sessions = response;
+			$scope.user = response.user;
+			$scope.sessions = response.sessions;
 			console.log("Sessions: " + JSON.stringify(response));
 		});
 	}
@@ -164,4 +169,5 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 			$scope.sessions.push(saved_session);
 		});
 	}
+
 }]);

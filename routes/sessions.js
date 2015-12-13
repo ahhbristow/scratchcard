@@ -53,9 +53,13 @@ module.exports = function(passport) {
 	// Get all sessions as JSON
 	router.get('/sessions', auth, function(req, res, next) {
 
-		CardsSession.find({}, function (err, post) {
+		CardsSession.find({}, function (err, data) {
 			if (err) return next(err);
-			res.json(post);
+			
+			var resp = {};
+			resp.user = req.user;
+			resp.sessions = data;
+			res.json(resp);
 		});
 	});
 
@@ -76,7 +80,6 @@ module.exports = function(passport) {
 			var resp = {};
 			resp.user = req.user;
 			resp.session = data;
-			console.log(resp);
 			res.json(resp);
 		});
 	});
