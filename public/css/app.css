@@ -5,7 +5,8 @@
 	font-size: 15px;
 }
 
-body {
+#cards_app {
+	margin-top: 50px;
 }
 
 button {
@@ -21,6 +22,11 @@ button {
 	clear: both;
 }
 
+#menu_bar {
+	position: fixed;
+	width: 100%;
+	top: 0px;
+}
 #menu_bar, #control_bar {
 	/*background-color: #00A818;*/
 	background-color: #999;
