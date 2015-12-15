@@ -7,6 +7,13 @@
 	<div class="session" ng-repeat="session in sessions" >
 		<p><a id="session_{{session._id}}" href="#/sessions/{{session._id}}">{{session.name}}</a></p>
 	</div>
+
+	<div ng-if="participating_sessions.length > 0">
+		<h2>Participating in...</h2>
+		<div class="session" ng-repeat="participating_session in participating_sessions" >
+			<p><a id="session_{{participating_session._id}}" href="#/sessions/{{participating_session._id}}">{{participating_session.name}}</a></p>
+		</div>
+	</div>
 </div>
 <div id="new_session_control_bar">
 	<form class="form-inline">

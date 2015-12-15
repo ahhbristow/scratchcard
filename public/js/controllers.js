@@ -50,10 +50,11 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 			$scope.user = response.user;
 			$scope.session = response.session;
 	
-			// Check if this user has been here before.
+			// Check if this user has been here before and isn't the creator.
 			// If not, then add them
 			// TODO: Should we use jQuery here?
-			if ($.inArray($scope.user._id, $scope.session.participants) == -1) {
+			if ($.inArray($scope.user._id, $scope.session.participants) == -1 && 
+			    $scope.user._id != $scope.session.creator) {
 				console.log("Adding user to session");
 				$scope.session.participants.push($scope.user._id);	
 			}
@@ -166,6 +167,7 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 		$http.get("/sessions").success(function (response) {
 			$scope.user = response.user;
 			$scope.sessions = response.sessions;
+			$scope.participating_sessions = response.participating_sessions;
 			console.log("Sessions: " + JSON.stringify(response));
 		});
 	}

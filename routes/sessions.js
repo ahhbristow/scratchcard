@@ -63,7 +63,12 @@ module.exports = function(passport) {
 			var resp = {};
 			resp.user = user;
 			resp.sessions = data;
-			res.json(resp);
+
+			// Get participating sessions
+			CardsSession.find({participants: user._id}, function (err, data) {
+				resp.participating_sessions = data;
+				res.json(resp);
+			});
 		});
 	});
 
