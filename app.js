@@ -146,7 +146,6 @@ io.on('connection', function(client) {
 	// Client will send a move_end message once
 	// dragging has stopped.  We sync at this point
 	client.on('move_end', function(data) {
-		console.log("Rec'd move_end");
 		var session_id = data.session_id;
 		app.sync_session(session_id);
 	});
@@ -179,8 +178,6 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
 	app.use(function(err, req, res, next) {
 		console.log(err.stack )
-		console.log(err);
-		console.trace();
 		res.status(err.status || 500);
 		res.render('error', {
 			message: err.message,

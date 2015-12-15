@@ -34,7 +34,8 @@ cardsApp.directive('draggable', function() {
 					scope.$apply(function() {
 						scope.dragMove(scope.card);
 					});
-				}
+				},
+				containment: [0,0,10000,10000]
 			});
 		}
 	};

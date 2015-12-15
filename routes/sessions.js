@@ -50,14 +50,18 @@ module.exports = function(passport) {
 		});
 	});
 
-	// Get all sessions as JSON
+	// TODO: Move to middleware
+	// Get all sessions for this user as JSON
 	router.get('/sessions', auth, function(req, res, next) {
 
-		CardsSession.find({}, function (err, data) {
+		// Get all the sessions where the creator is the user we're
+		// logged in as.
+		var user = req.user;
+		CardsSession.find({creator: user._id}, function (err, data) {
 			if (err) return next(err);
 			
 			var resp = {};
-			resp.user = req.user;
+			resp.user = user;
 			resp.sessions = data;
 			res.json(resp);
 		});

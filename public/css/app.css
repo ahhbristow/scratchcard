@@ -36,6 +36,10 @@ h1#session_name {
 	margin-top: 50px;
 }
 
+#header {
+	z-index:-1;
+}
+
 #title {
 	font-size: 80px;
 	text-align: center;
@@ -47,10 +51,10 @@ h1#session_name {
 
 #menu_bar {
 	position: fixed;
-	width: 100%;
-	top: 0px;
+	top: 0;
+	right: 0;
 	padding: 5px;
-	z-index: -1;
+	z-index: 0;
 }
 #menu_bar #username {
 	float: right;
@@ -64,9 +68,14 @@ h1#session_name {
 #content {
 	padding-left: 40px;
 	margin-top: 20px;
-	z-index: 0;
 }
 
+/*
+ * Cards need to appear above everything.
+ */
+#cards {
+	z-index: 10000;
+}
 .card {
 	position: absolute;
 	background-color: rgb(168,168,168);
@@ -109,6 +118,7 @@ textarea {
 	background: linear-gradient(rgba(255,0,0,0), rgba(200,200,200,1));
 	background-position-y: 20px;
 	background-repeat: no-repeat;
+	z-index: -1;
 }
 
 #control_bar input {

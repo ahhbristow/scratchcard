@@ -14,6 +14,9 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	$scope.session_id = $routeParams.sessionId;
 	$scope.session = {};
 
+	$scope.goBackToSessions = function() {
+		$location.path('/sessions');
+	}
 
 	// Delete session and redirect to main page
 	$scope.deleteSession = function() {
@@ -46,6 +49,16 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		$http.get("/sessions/" + session_id).success(function (response) {
 			$scope.user = response.user;
 			$scope.session = response.session;
+	
+			// Check if this user has been here before.
+			// If not, then add them
+			// TODO: Should we use jQuery here?
+			if ($.inArray($scope.user._id, $scope.session.participants) == -1) {
+				console.log("Adding user to session");
+				$scope.session.participants.push($scope.user._id);	
+			}
+			
+
 		});
 	}
 	$scope.getCards($scope.session_id);
@@ -161,6 +174,7 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 	$scope.addSession = function(name) {
 		var session = {
 			name: $scope.new_session.name,
+			creator: $scope.user._id,
 			cards: []
 		}
 
