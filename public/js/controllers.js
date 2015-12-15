@@ -130,6 +130,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		}
 	}
 
+	// TODO: Should go in it's own controller
 	$scope.logout = function() {
 		console.log("Logging out");
 		window.location.href = "/logout";
@@ -168,6 +169,12 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 			console.log("Added session: " + JSON.stringify(saved_session));
 			$scope.sessions.push(saved_session);
 		});
+	}
+	
+	// TODO: Should go in it's own controller
+	$scope.logout = function() {
+		console.log("Logging out");
+		window.location.href = "/logout";
 	}
 
 }]);

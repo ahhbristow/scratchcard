@@ -1,14 +1,8 @@
-<div id="menu_bar">
-	<div id="logout">
-		<div id="username">{{user.username}}</div>
-		<button id="logout" ng-click="logout()">Logout</button>
-	</div>
-	<div class="spacer"></div>
-</div>
-
+<ng-include src="'/static/partials/menu.html'"></ng-include>
 
 <div id="content">
 	<div id="header">
+		<button id="back_to_sessions">sessions/</button>
 		<h1 id="session_name">{{session.name}}</h1>
 	</div>
 	<div id="cards">
@@ -18,13 +12,8 @@
 	</div>
 </div>
 <div id="control_bar">
-	<button id="question" class="question" ng-click="addCard('question', $event)">Question</button>
-	<button class="story" ng-click="addCard('story', $event)">Story</button>
-	<button class="rule" ng-click="addCard('rule', $event)">Rule</button>
-	<button class="example" ng-click="addCard('example', $event)">Example</button>
-	
-	<span class="tip">Tip: Hold 'Ctrl' and double-click a card to delete it!</span>
-	<span>{{user.username}}</span>
-
-	<button class="delete" ng-click="deleteSession()">Delete Session</button>
+	<button id="question" class="btn question" ng-click="addCard('question', $event)">Question</button>
+	<button class="btn story" ng-click="addCard('story', $event)">Story</button>
+	<button class="btn rule" ng-click="addCard('rule', $event)">Rule</button>
+	<button class="btn example" ng-click="addCard('example', $event)">Example</button>
 </div>

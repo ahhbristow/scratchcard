@@ -1,11 +1,4 @@
-<div id="menu_bar">
-	<div id="logout">
-		<div id="username">{{user.username}}</div>
-		<button id="logout" ng-click="logout()">Logout</button>
-	</div>
-	<div class="spacer"></div>
-</div>
-
+<ng-include src="'/static/partials/menu.html'"></ng-include>
 
 <div id="content">
 	<div id="header">
@@ -15,8 +8,10 @@
 		<p><a id="session_{{session._id}}" href="#/sessions/{{session._id}}">{{session.name}}</a></p>
 	</div>
 </div>
-<div id="control_bar">
-	<input id="new_session_name" type="text" ng-model="new_session.name"/>
-	<button id="add_session" ng-click="addSession()">New Session</button>
+<div id="new_session_control_bar">
+	<form class="form-inline">
+		<input class="form-control" id="new_session_name" type="text" ng-model="new_session.name"/>
+		<button class="btn btn-success" id="add_session" ng-click="addSession()">New Session</button>
+	</form>
 	
 </div>

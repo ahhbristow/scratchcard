@@ -3,14 +3,37 @@
 * {
 	font-family: 'Roboto Slab', serif;
 	font-size: 15px;
+	color: #444;
 }
 
-#cards_app {
+h1 {
+	color: #444;
+}
+
+body {
+	background-color: rgb(255,2255,220);
+}
+form {
+	margin: 0;
+}
+
+h1#session_name {
+	display: inline;
+}
+#back_to_sessions {
+	background: none;
+	border: none;
+	text-decoration: underline;
+	display: inline;
+	padding: 0;
+}
+#back_to_sessions:hover {
+	color: green;
+	cursor: pointer;
+}
+
+#login_container {
 	margin-top: 50px;
-}
-
-button {
-	color: black;
 }
 
 #title {
@@ -26,15 +49,13 @@ button {
 	position: fixed;
 	width: 100%;
 	top: 0px;
-}
-#menu_bar, #control_bar {
-	/*background-color: #00A818;*/
-	background-color: #999;
 	padding: 5px;
-	color: white;
+	z-index: -1;
 }
 #menu_bar #username {
 	float: right;
+	margin-right: 50px;
+	padding-top: 5px;
 }
 #logout {
 	float: right;
@@ -42,6 +63,8 @@ button {
 
 #content {
 	padding-left: 40px;
+	margin-top: 20px;
+	z-index: 0;
 }
 
 .card {
@@ -72,11 +95,20 @@ textarea {
 	border: none;
 }
 
+#new_session_control_bar {
+	position: fixed;
+	bottom: 0px;
+	padding: 10px;
+	width: 100%;
+}
 #control_bar {
 	position: fixed;
 	bottom: 0px;
 	padding: 10px;
 	width: 100%;
+	background: linear-gradient(rgba(255,0,0,0), rgba(200,200,200,1));
+	background-position-y: 20px;
+	background-repeat: no-repeat;
 }
 
 #control_bar input {
@@ -85,7 +117,7 @@ textarea {
 #control_bar button {
 	padding: 5px;
 	width: 80px;
-	color: black;
+	box-shadow: 2px 2px 10px #666;
 }
 #control_bar #add_session {
 	width: 150px;
@@ -95,7 +127,6 @@ textarea {
 	width: 150px;
 }
 #control_bar .tip {
-	color: white;
 	font-style: italic;
 	margin-left: 150px;
 	padding: 5px;
