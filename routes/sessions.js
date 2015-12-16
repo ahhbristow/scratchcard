@@ -57,7 +57,9 @@ module.exports = function(passport) {
 		// Get all the sessions where the creator is the user we're
 		// logged in as.
 		var user = req.user;
-		CardsSession.find({creator: user._id}, function (err, data) {
+		CardsSession.find({creator: user._id})
+		   .populate('creator','username')
+	           .exec(function (err, data) {
 			if (err) return next(err);
 			
 			var resp = {};
@@ -65,8 +67,11 @@ module.exports = function(passport) {
 			resp.sessions = data;
 
 			// Get participating sessions
-			CardsSession.find({participants: user._id}, function (err, data) {
+			CardsSession.find({participants: user._id})
+			  .populate('participant')
+			  .exec(function (err, data) {
 				resp.participating_sessions = data;
+				console.log(resp);
 				res.json(resp);
 			});
 		});
@@ -83,12 +88,15 @@ module.exports = function(passport) {
 
 	// Get a session as JSON
 	router.get('/sessions/:id', auth, function(req, res, next) {
-		CardsSession.findById(req.params.id, function (err, data) {
+		CardsSession.findById(req.params.id)
+	           .populate('participants','username')
+		   .exec(function (err, data) {
 			if (err) return next(err);
 
 			var resp = {};
 			resp.user = req.user;
 			resp.session = data;
+			console.log(resp);
 			res.json(resp);
 		});
 	});

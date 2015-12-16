@@ -104,6 +104,14 @@ textarea {
 	border: none;
 }
 
+div.sessions {
+	margin-top: 30px;
+}
+div.sessions h2 {
+	font-size: 20px;
+	color: darkgoldenrod;
+}
+
 #new_session_control_bar {
 	position: fixed;
 	bottom: 0px;

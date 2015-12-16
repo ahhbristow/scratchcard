@@ -4,11 +4,16 @@
 	<div id="header">
 		<h1>Three Amigo Sessions</h1>
 	</div>
-	<div class="session" ng-repeat="session in sessions" >
-		<p><a id="session_{{session._id}}" href="#/sessions/{{session._id}}">{{session.name}}</a></p>
+	
+	
+	<div class="sessions" ng-if="sessions.length > 0">
+		<h2>My Sessions...</h2>
+		<div class="session" ng-repeat="session in sessions" >
+			<p><a id="session_{{session._id}}" href="#/sessions/{{session._id}}">{{session.name}}</a></p>
+		</div>
 	</div>
 
-	<div ng-if="participating_sessions.length > 0">
+	<div class="sessions" ng-if="participating_sessions.length > 0">
 		<h2>Participating in...</h2>
 		<div class="session" ng-repeat="participating_session in participating_sessions" >
 			<p><a id="session_{{participating_session._id}}" href="#/sessions/{{participating_session._id}}">{{participating_session.name}}</a></p>

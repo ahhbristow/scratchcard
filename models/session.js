@@ -11,8 +11,8 @@ var CardSchema = new mongoose.Schema({
 var CardsSessionSchema = new mongoose.Schema({
     id: Number,
     name: String,
-    creator: Schema.Types.ObjectId,
-    participants: [Schema.Types.ObjectId],
+    creator: {type: Schema.Types.ObjectId, ref: 'User'},
+    participants: [{type:Schema.Types.ObjectId,ref: 'User'}],
     cards: [CardSchema]
 });
 
