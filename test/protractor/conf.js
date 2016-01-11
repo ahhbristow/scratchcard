@@ -16,5 +16,8 @@ exports.config = {
 		element2(by.id('username')).sendKeys("automation_user_slave");
 		element2(by.id('password')).sendKeys("password");
 		element2(by.id('login')).click();
+	},
+	onComplete: function(exitCode) {
+		browser2.quit();
 	}
 };
