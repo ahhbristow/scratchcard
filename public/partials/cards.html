@@ -16,4 +16,10 @@
 	<button class="btn story" ng-click="addCard('story', $event)">Story</button>
 	<button class="btn rule" ng-click="addCard('rule', $event)">Rule</button>
 	<button class="btn example" ng-click="addCard('example', $event)">Example</button>
+
+	<div id="participants">
+		<ul style="display: inline;">
+			<li class="participant" ng-repeat="participant in session.participants">{{ participant.username }}</li>
+		</ul>
+	</div>
 </div>
