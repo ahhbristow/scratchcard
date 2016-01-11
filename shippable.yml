@@ -9,13 +9,20 @@ addons:
         firefox: "19.0"
 
 services:
-       - selenium
+        - selenium
 
 install:
         - npm install -g protractor
 
+before_script:
+        - "export DISPLAY=:99.0"
+        - "/etc/init.d/xvfb start"
+
 script:
-       - protractor test/protractor/conf.js
+        - protractor test/protractor/conf.js
+
+after_script:
+        - "/etc/init.d/xvfb stop"
 
 after_success :
         - git push -f git@heroku.com:salty-basin-2309.git master
