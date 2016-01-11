@@ -15,7 +15,7 @@ services:
        - selenium
 
 script:
-       - protractor conf.js
+       - protractor test/protractor/conf.js
 
 after_success :
         - git push -f git@heroku.com:salty-basin-2309.git master
