@@ -3,5 +3,10 @@ machine:
                 version: 5.4.0
 
 test:
+        pre:
+                - npm start:
+                        background: true
+                - sleep 5
         override:
+                - webdriver-manager update
                 - protractor test/protractor/conf.js
