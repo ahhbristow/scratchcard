@@ -2,7 +2,7 @@
 language: node_js
 
 addons:
-        firefox: "19.0"
+        chrome: "47.0"
 
 services:
         - selenium
