@@ -10,6 +10,7 @@ services:
 before_install:
         - mkdir -p ~/.nvm/versions
         - source ~/.nvm/nvm.sh && nvm install 5.4.0
+        - nvm use 5.4.0
 
 install:
         - npm install -g protractor
