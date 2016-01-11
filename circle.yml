@@ -1,0 +1,7 @@
+machine:
+        node:
+                version: 5.4.0
+
+test:
+        override:
+                - protractor test/protractor/conf.js
