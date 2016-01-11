@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "postinstall": "./node_modules/bower/bin/bower --allow-root install"
+    "postinstall": "./node_modules/bower/bin/bower --allow-root install",
+    "test": "node ./bin/www & protractor test/protractor/conf.js"
   },
   "dependencies": {
     "body-parser": "~1.12.4",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "jasmine-core": "^2.3.4",
-    "requirejs": "^2.1.20"
+    "requirejs": "^2.1.20",
+    "protractor": "^3.0.0"
   }
 }
