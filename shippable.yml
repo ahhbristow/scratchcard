@@ -1,15 +1,15 @@
 # language setting
 language: node_js
 
-# version numbers, testing against two versions of node
-node_js:
-        - "5.4.0"
-
 addons:
         firefox: "19.0"
 
 services:
         - selenium
+
+before_install:
+        - mkdir -p ~/.nvm/versions
+        - source ~/.nvm/nvm.sh && nvm install 5.4.0
 
 install:
         - npm install -g protractor
