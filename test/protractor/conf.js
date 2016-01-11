@@ -5,7 +5,7 @@ exports.config = {
 	onPrepare: function() {
 		jasmine.getEnv().addReporter(
 			new HtmlScreenshotReporter({
-				dest: 'target/screenshots',
+				dest: '$CIRCLE_ARTIFACTS/screenshots',
 				filename: 'index_cards_test_report.html'
 			})
 		);
