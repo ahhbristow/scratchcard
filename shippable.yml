@@ -8,11 +8,11 @@ node_js:
 addons:
         firefox: "19.0"
 
-install:
-        - npm install -g protractor
-
 services:
        - selenium
+
+install:
+        - npm install -g protractor
 
 script:
        - protractor test/protractor/conf.js
