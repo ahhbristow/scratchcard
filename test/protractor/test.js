@@ -4,6 +4,7 @@ describe('Creating a session',function() {
       
 	it('should add a new session and show on the list of my sessions', function() {
 		// Add a session in main browser
+		console.log("Populating new session name");
 		session_name = "Demo" + Date.now();
 		element(by.id('new_session_name')).click();
 		element(by.id('new_session_name')).sendKeys(session_name);
