@@ -8,10 +8,13 @@ describe('Creating a session',function() {
 		element(by.id('new_session_name')).click();
 		element(by.id('new_session_name')).sendKeys(session_name);
 		element(by.id('add_session')).click();
+		console.log("Adding session...");
 
 		// Check that it appears in the list of sessions
 		var session_link = element(by.linkText(session_name));
 		expect(session_link).not.toBe(null);
+		console.log("...success");
+
 	});
 
 	it('should not appear on another users list of sessions', function() {
