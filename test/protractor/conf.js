@@ -28,14 +28,14 @@ exports.config = {
 		element(by.id('register')).click();
 		console.log('Registered in master browser');
 
-		element(by.id('username')).click();
-		element(by.id('username')).sendKeys("ci_user_master");
+		//element(by.id('username')).click();
+		//element(by.id('username')).sendKeys("ci_user_master");
 
-		element(by.id('password')).click();
-		element(by.id('password')).sendKeys("password");
+		//element(by.id('password')).click();
+		//element(by.id('password')).sendKeys("password");
 
-		element(by.id('login')).click();
-		console.log('Logged into master browser');
+		//element(by.id('login')).click();
+		//console.log('Logged into master browser');
 
 		// Register and login as 'slave' with second browser
 		browser2.get('http://localhost:4072/');
@@ -49,13 +49,13 @@ exports.config = {
 		element2(by.id('register')).click();
 		console.log('Registered in slave browser');
 
-		element2(by.id('username')).click();
-		element2(by.id('username')).sendKeys("ci_user_slave");
+		//element2(by.id('username')).click();
+		//element2(by.id('username')).sendKeys("ci_user_slave");
 
-		element2(by.id('password')).click();
-		element2(by.id('password')).sendKeys("password");
-		element2(by.id('login')).click();
-		console.log('Logged into slave browser');
+		//element2(by.id('password')).click();
+		//element2(by.id('password')).sendKeys("password");
+		//element2(by.id('login')).click();
+		//console.log('Logged into slave browser');
 	},
 	onComplete: function(exitCode) {
 		browser2.quit();
