@@ -112,8 +112,11 @@ app.use('/', routes);
 app.sync_session = function(session_id) {
 
 	var session_details = app.locals.sessions[session_id];
-	CardsSession.findByIdAndUpdate(session_id, session_details, function (err, updated_session) {
-		if (err) return next(err);
+	var cards = session_details.cards;
+	CardsSession.findByIdAndUpdate(session_id, {$set: {cards: cards}}, function (err, updated_session) {
+		if (err) {
+			console.log(err);	
+		}
 
 		io.emit('sync', {
 			"session_id": session_id,
