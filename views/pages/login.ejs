@@ -27,6 +27,11 @@
 
 
 		<div class="container">
+		
+			<% if (message && message.length > 0) { %>
+			<div class="alert alert-danger" id="error_messages"><%= message %></div>
+			<% } %>
+			
 			<div class="row" id="login_container">
 				<div class="col-md-4 col-md-offset-4">
 		    		<div class="panel panel-default">

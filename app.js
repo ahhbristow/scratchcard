@@ -35,6 +35,12 @@ var CardsSession = require(__dirname + '/models/session.js');
 var User = require(__dirname + '/models/user.js');
 
 //=======================
+// Configure flash messages
+var flash = require('connect-flash');
+app.use(flash());
+
+
+//=======================
 // Configure Sessions
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
@@ -61,6 +67,7 @@ passport.deserializeUser(User.deserializeUser());
 // Configure Socket IO
 var io = require('socket.io')(server);
 io.set('transports', ['websocket']);
+
 
 //=======================
 // Socket auth

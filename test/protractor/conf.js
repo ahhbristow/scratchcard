@@ -4,17 +4,21 @@ exports.config = {
 	specs: ['test.js'],
 	onPrepare: function() {
 
-		jasmine.getEnv().addReporter(
-			new HtmlScreenshotReporter({
-				dest: '$CIRCLE_ARTIFACTS',
-				filename: 'index_cards_test_report.html'
-			})
-		);
 
 		// Fork a new browser instance
 		browser2 = browser.forkNewDriverInstance();
 		browser.driver.manage().window().maximize();
 		browser2.driver.manage().window().maximize();
+
+		// Register the browsers for screenshots
+		jasmine.getEnv().addReporter(
+			new HtmlScreenshotReporter({
+				dest: '$CIRCLE_ARTIFACTS',
+				filename: 'index_cards_test_report.html',
+			        browsers: [browser,browser2]
+			})
+		);
+
 
 		// Login as 'master' with first browser	
 		browser.get('http://localhost:4072/');

@@ -1,4 +1,5 @@
 var express = require('express');
+var flash = require('connect-flash');
 var router = express.Router();
 
 // Load models
@@ -19,12 +20,13 @@ module.exports = function(passport) {
 	// Perform login
 	router.post('/login', passport.authenticate('local',{
 		successRedirect:'/',
-		failureRedirect:'/login'
+		failureRedirect:'/login',
+		failureFlash: true
 	}));
 
 	// Get login page
 	router.get('/login', function(req, res) {
-		res.render('pages/login');
+		res.render('pages/login', {message: req.flash('error')});
 	});
 
 	// Perform logout
