@@ -10,3 +10,9 @@ test:
         override:
                 - webdriver-manager update
                 - protractor test/protractor/conf.js
+
+deployment:
+        staging:
+                branch: master
+                heroku:
+                        appname: salty-basin-2309
