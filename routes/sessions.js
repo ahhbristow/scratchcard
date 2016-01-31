@@ -39,14 +39,27 @@ module.exports = function(passport) {
 	// Perform new registration
 	// TODO: Move to middleware
 	router.post('/register', function(req, res, next) {
-		User.register(new User({ username : req.body.username }), req.body.password, function(err, user) {
+
+		var new_user = new User({
+			username: req.body.username,
+			password: req.body.password,
+			email: req.body.email
+		});
+
+		// TODO: Validate user here
+
+		User.register(new_user, req.body.password, function(err, user) {
+
+			// Redirect to login and show an error if we couldn't register
 			if (err) {
 				console.log("Registration error: " + err);
-				return res.render('pages/login');
+				var error_msg = "Sorry, we could not create your account: " + err;
+				req.flash('error', error_msg);
+				return res.render('pages/login', {message: req.flash('error')});
 			}
+
 			console.log("Registration successful, redirecting to sessions");
 			passport.authenticate('local')(req, res, function () {
-				
 				res.redirect('/');
 			});
 		});
