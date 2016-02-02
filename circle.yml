@@ -4,11 +4,13 @@ machine:
 
 test:
         pre:
+                - webdriver-manager update
+                - webdriver-manager start:
+                        background: true
                 - npm start:
                         background: true
                 - sleep 5
         override:
-                - webdriver-manager update
                 - protractor test/protractor/conf.js
 
 deployment:
