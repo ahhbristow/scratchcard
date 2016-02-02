@@ -2,6 +2,7 @@ var HtmlScreenshotReporter = require('protractor-jasmine2-screenshot-reporter');
 
 exports.config = {
 	specs: ['login.js'],
+	seleniumAddress: 'http://localhost:4444/wd/hub',
 	onPrepare: function() {
 
 
@@ -23,5 +24,6 @@ exports.config = {
 	onComplete: function(exitCode) {
 		browser.quit();
 		browser2.quit();
+		console.log("All tests finished. Cleaning up...");
 	}
 };
