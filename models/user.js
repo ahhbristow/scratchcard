@@ -3,9 +3,12 @@ var Schema = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
 
 var user = new Schema({
-	email: {type: String, required: true, unique: true}
+	email: {type: String, required: true, unique: true, index: true}
 });
+
 
 user.plugin(passportLocalMongoose);
 
-module.exports = mongoose.model('User',user);
+var User = mongoose.model('User',user);
+
+module.exports = User;
