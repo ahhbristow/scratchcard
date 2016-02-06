@@ -15,6 +15,7 @@ var server = require('http').createServer(app);
 var env = app.get('env');
 console.log("Loading: " + env);
 var config = require(__dirname + '/config/' + env);
+var auth_config = require(__dirname + '/config/auth');
 
 
 //=======================
@@ -56,12 +57,10 @@ app.use(session({
 //=======================
 // Configure Passport
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+var google_auth = require(__dirname + '/config/google_auth.js')(passport);
+
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 //=======================
 // Configure Socket IO

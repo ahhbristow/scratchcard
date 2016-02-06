@@ -70,6 +70,16 @@ h1#session_name {
 	margin-top: 20px;
 }
 
+
+#sign_in_button {
+	margin: 50px auto;
+	display: block;
+	width: 191px;
+	height: 46px;
+	background-repeat: no-repeat;
+	background-image: url('/static/images/google_signin_buttons/web/1x/btn_google_signin_dark_normal_web.png');
+}
+
 /*
  * Cards need to appear above everything.
  */

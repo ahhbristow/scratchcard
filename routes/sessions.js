@@ -17,6 +17,15 @@ module.exports = function(passport) {
 		res.render('pages/index');
 	});
 
+	// Perform authentication with Google
+	router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+
+	router.get('/auth/google/callback',
+		passport.authenticate('google', {
+			successRedirect : '/',
+			failureRedirect : '/login'
+		}));
+
 	// Perform login
 	router.post('/login', passport.authenticate('local',{
 		successRedirect:'/',
@@ -42,8 +51,8 @@ module.exports = function(passport) {
 
 		var new_user = new User({
 			username: req.body.username,
-			password: req.body.password,
-			email: req.body.email
+		    password: req.body.password,
+		    email: req.body.email
 		});
 
 		// TODO: Validate user here
@@ -73,18 +82,18 @@ module.exports = function(passport) {
 		// logged in as.
 		var user = req.user;
 		CardsSession.find({creator: user._id})
-		   .populate('creator','username')
-	           .exec(function (err, data) {
+		.populate('creator','username')
+		.exec(function (err, data) {
 			if (err) return next(err);
-			
+
 			var resp = {};
 			resp.user = user;
 			resp.sessions = data;
 
 			// Get participating sessions
 			CardsSession.find({participants: user._id})
-			  .populate('participant')
-			  .exec(function (err, data) {
+			.populate('participant')
+			.exec(function (err, data) {
 				resp.participating_sessions = data;
 				console.log(resp);
 				res.json(resp);
@@ -104,8 +113,8 @@ module.exports = function(passport) {
 	// Get a session as JSON
 	router.get('/sessions/:id', auth, function(req, res, next) {
 		CardsSession.findById(req.params.id)
-	           .populate('participants','username')
-		   .exec(function (err, data) {
+		.populate('participants','username')
+		.exec(function (err, data) {
 			if (err) return next(err);
 
 			var resp = {};
