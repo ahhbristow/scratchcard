@@ -35,6 +35,9 @@ module.exports = function(passport) {
 	},
 	function(token, refreshToken, profile, done) {
 
+		// TODO: Remove
+		console.log(JSON.stringify(profile));
+
 		// make the code asynchronous
 		// User.findOne won't fire until we have all our data back from Google
 		process.nextTick(function() {
@@ -57,6 +60,7 @@ module.exports = function(passport) {
 				newUser.google.token = token;
 				newUser.google.name  = profile.displayName;
 				newUser.google.email = profile.emails[0].value; // pull the first email
+				newUser.google.picture = profile._json.image.url; // pull the first email
 
 				// save the user
 				newUser.save(function(err) {
