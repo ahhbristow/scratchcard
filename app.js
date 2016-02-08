@@ -88,7 +88,7 @@ function onAuthorizeSuccess(data,accept) {
 	accept(null,true);
 }
 function onAuthorizeFail(data,message,error,accept) {
-	console.log('FAILED connection to socket.io');
+	console.log('FAILED connection to socket.io: ' + message);
 	accept(null,false);
 }
 
