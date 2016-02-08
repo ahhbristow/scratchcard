@@ -59,7 +59,6 @@ module.exports = function(passport) {
 			.populate('participant')
 			.exec(function (err, data) {
 				resp.participating_sessions = data;
-				console.log(resp);
 				res.json(resp);
 			});
 		});
@@ -88,7 +87,6 @@ module.exports = function(passport) {
 			var resp = {};
 			resp.user = req.user;
 			resp.session = data;
-			console.log(resp);
 			res.json(resp);
 		});
 	});
