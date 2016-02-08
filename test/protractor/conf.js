@@ -1,6 +1,6 @@
 var HtmlScreenshotReporter = require('protractor-jasmine2-screenshot-reporter');
 var GoogleLoginPage = require('./pages/google_login');
-var TestConfig = require(__dirname + '/config/test');
+var TestConfig = require(__dirname + '/../../config/test');
 
 exports.config = {
 	specs: ['google_login.js'],
