@@ -4,7 +4,7 @@ describe('Creating a session',function() {
 
 	beforeAll(function() {
 		console.log("Logging in");
-		browser.get('http://localhost:4072/');
+		browser.get('https://localhost:4072/');
 		element(by.id('sign_in_button')).click();
 	});
     /*  
@@ -39,7 +39,7 @@ describe('Loading of a session with existing cards', function() {
 	var session_url;
 
 	beforeAll(function() {
-		browser.get('http://localhost:4072/');
+		browser.get('https://localhost:4072/');
 		
 		// Create a session
 		session_name = "Demo" + Date.now();

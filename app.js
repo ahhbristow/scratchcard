@@ -19,7 +19,6 @@ var server = require('https').createServer(credentials,app);
 var env = app.get('env');
 console.log("Loading: " + env);
 var config = require(__dirname + '/config/' + env);
-var auth_config = require(__dirname + '/config/auth');
 
 
 //=======================
@@ -61,7 +60,8 @@ app.use(session({
 //=======================
 // Configure Passport
 var passport = require('passport');
-var google_auth = require(__dirname + '/config/google_auth.js')(passport);
+var auth_config = require(__dirname + '/config/auth');
+var google_auth = require(__dirname + '/init/google_auth.js')(passport, auth_config);
 
 app.use(passport.initialize());
 app.use(passport.session());

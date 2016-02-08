@@ -1,5 +1,6 @@
 var HtmlScreenshotReporter = require('protractor-jasmine2-screenshot-reporter');
 var GoogleLoginPage = require('./pages/google_login');
+var TestConfig = require(__dirname + '/config/test');
 
 exports.config = {
 	specs: ['google_login.js'],
@@ -23,11 +24,11 @@ exports.config = {
 
 		// Login to the first browser
 		console.log("Logging in");
-		browser.driver.get('http://localhost:4072/');
+		browser.driver.get('https://localhost:4072/');
 		element(by.id('sign_in_button')).click();
 		var google_login_page = new GoogleLoginPage();
-		google_login_page.submitEmail('');
-		google_login_page.submitPassword('');
+		google_login_page.submitEmail(TestConfig.gmail);
+		google_login_page.submitPassword(TestConfig.gmail_password);
 		google_login_page.approveAccess();
 
 	},

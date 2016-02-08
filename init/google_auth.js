@@ -1,36 +1,22 @@
-// config/passport.js
-
-console.log("Loading Google Auth");
-
-// load all the things we need
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-
-// load up the user model
 var User       = require('../models/user');
 
-// load the auth variables
-var configAuth = require('./auth');
+module.exports = function(passport, auth_config) {
 
-module.exports = function(passport) {
-
-	// used to serialize the user for the session
 	passport.serializeUser(function(user, done) {
 		done(null, user.id);
 	});
 
-	// used to deserialize the user
 	passport.deserializeUser(function(id, done) {
 		User.findById(id, function(err, user) {
 			done(err, user);
 		});
 	});
 
-	// GOOGLE =====================================================
 	passport.use(new GoogleStrategy({
-
-		clientID        : configAuth.googleAuth.clientID,
-		clientSecret    : configAuth.googleAuth.clientSecret,
-		callbackURL     : configAuth.googleAuth.callbackURL,
+		clientID        : auth_config.googleAuth.clientID,
+		clientSecret    : auth_config.googleAuth.clientSecret,
+		callbackURL     : auth_config.googleAuth.callbackURL,
 
 	},
 	function(token, refreshToken, profile, done) {
