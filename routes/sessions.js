@@ -26,13 +26,6 @@ module.exports = function(passport) {
 			failureRedirect : '/login'
 		}));
 
-	// Perform login
-	router.post('/login', passport.authenticate('local',{
-		successRedirect:'/',
-		failureRedirect:'/login',
-		failureFlash: true
-	}));
-
 	// Get login page
 	router.get('/login', function(req, res) {
 		res.render('pages/login', {message: req.flash('error')});
@@ -44,35 +37,6 @@ module.exports = function(passport) {
 		res.redirect('/login');
 	});
 
-
-	// Perform new registration
-	// TODO: Move to middleware
-	router.post('/register', function(req, res, next) {
-
-		var new_user = new User({
-			username: req.body.username,
-		    password: req.body.password,
-		    email: req.body.email
-		});
-
-		// TODO: Validate user here
-
-		User.register(new_user, req.body.password, function(err, user) {
-
-			// Redirect to login and show an error if we couldn't register
-			if (err) {
-				console.log("Registration error: " + err);
-				var error_msg = "Sorry, we could not create your account: " + err;
-				req.flash('error', error_msg);
-				return res.render('pages/login', {message: req.flash('error')});
-			}
-
-			console.log("Registration successful, redirecting to sessions");
-			passport.authenticate('local')(req, res, function () {
-				res.redirect('/');
-			});
-		});
-	});
 
 	// TODO: Move to middleware
 	// Get all sessions for this user as JSON
@@ -104,6 +68,10 @@ module.exports = function(passport) {
 	// Add new session
 	router.post('/sessions', auth, function(req, res, next) {
 		console.log("Adding new card");
+
+		// Generate a random hash to use in the URL as a
+		// session ID
+
 		CardsSession.create(req.body, function (err, post) {
 			if (err) return next(err);
 			res.json(post);

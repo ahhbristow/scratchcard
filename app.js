@@ -1,3 +1,4 @@
+var fs = require('fs');
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
@@ -7,7 +8,10 @@ var bodyParser = require('body-parser');
 //=======================
 // Initialise app
 var app = express();
-var server = require('http').createServer(app);  
+var private_key  = fs.readFileSync('certs/server.key');
+var private_cert = fs.readFileSync('certs/server.crt');
+var credentials = {key: private_key, cert: private_cert};
+var server = require('https').createServer(credentials,app);
 
 
 //=======================

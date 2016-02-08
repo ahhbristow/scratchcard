@@ -1,7 +1,13 @@
 describe('Creating a session',function() {
 
 	var session_name;
-      
+
+	beforeAll(function() {
+		console.log("Logging in");
+		browser.get('http://localhost:4072/');
+		element(by.id('sign_in_button')).click();
+	});
+    /*  
 	it('should add a new session and show on the list of my sessions', function() {
 		// Add a session in main browser
 		console.log("Populating new session name");
@@ -23,6 +29,7 @@ describe('Creating a session',function() {
 		var session_link = element2(by.linkText(session_name));
 		expect(session_link).not.toBe(null);
 	});
+     */
 });
 
 
