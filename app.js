@@ -11,7 +11,27 @@ var app = express();
 var private_key  = fs.readFileSync('certs/server.key');
 var private_cert = fs.readFileSync('certs/server.crt');
 var credentials = {key: private_key, cert: private_cert};
-var server = require('https').createServer(credentials,app);
+
+// TODO: Move to a middleware file.
+function redirectToHTTPS(req,res,next) {
+	if(req.headers['x-forwarded-proto']!='https') {
+		res.redirect('https://' + req.host + req.url)
+	} else {
+		next() /* Continue to other routes if we're not redirecting */
+	}
+}
+
+// Heroku handles SSL, so we should run the app as a
+// HTTP server in production.  If the browser has come
+// to the app through HTTP, then redirect to HTTPS.
+// Heroku passes traffic on both protocols through to the
+// single port the app is configured to listen on.
+if (app.get('env') === 'production') {
+	var server = require('http').createServer(app);
+	app.use('*',redirectToHTTPS);
+} else {
+	var server = require('https').createServer(credentials,app);
+}
 
 
 //=======================
