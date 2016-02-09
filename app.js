@@ -8,10 +8,14 @@ var bodyParser = require('body-parser');
 //=======================
 // Initialise app
 var app = express();
-var private_key  = fs.readFileSync('certs/server.key');
-var private_cert = fs.readFileSync('certs/server.crt');
-var credentials = {key: private_key, cert: private_cert};
 
+
+// Heroku handles SSL, so we should run the app as a
+// HTTP server in production.  If the browser has come
+// to the app through HTTP, then redirect to HTTPS.
+// Heroku passes traffic on both protocols through to the
+// single port the app is configured to listen on.
+//
 // TODO: Move to a middleware file.
 function redirectToHTTPS(req,res,next) {
 	if (req.headers['x-forwarded-proto'] != 'https') {
@@ -22,15 +26,15 @@ function redirectToHTTPS(req,res,next) {
 	}
 }
 
-// Heroku handles SSL, so we should run the app as a
-// HTTP server in production.  If the browser has come
-// to the app through HTTP, then redirect to HTTPS.
-// Heroku passes traffic on both protocols through to the
-// single port the app is configured to listen on.
 if (app.get('env') === 'production') {
 	var server = require('http').createServer(app);
 	app.use('*',redirectToHTTPS);
 } else {
+	// Load the self-signed certificate
+	var private_key  = fs.readFileSync('certs/server.key');
+	var private_cert = fs.readFileSync('certs/server.crt');
+	var credentials = {key: private_key, cert: private_cert};
+
 	var server = require('https').createServer(credentials,app);
 }
 
