@@ -16,20 +16,11 @@ exports.config = {
 		// Register the browsers for screenshots
 		jasmine.getEnv().addReporter(
 			new HtmlScreenshotReporter({
-				dest: '',
+				dest: '$CIRCLE_ARTIFACTS',
 				filename: 'index_cards_test_report.html',
 			        browsers: [browser]
 			})
 		);
-
-		// Login to the first browser
-		console.log("Logging in");
-		browser.driver.get('https://localhost:4072/');
-		element(by.id('sign_in_button')).click();
-		var google_login_page = new GoogleLoginPage();
-		google_login_page.submitEmail(TestConfig.gmail);
-		google_login_page.submitPassword(TestConfig.gmail_password);
-		google_login_page.approveAccess();
 
 	},
 

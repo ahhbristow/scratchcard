@@ -1,6 +1,4 @@
 var LoginPage = require('./pages/login');
-console.log(LoginPage);
-
 
 // TODO: Some of these scenarios are not independent.  This
 // doesn't seem like a big issue at the moment, but it could be
