@@ -12,7 +12,7 @@ var GoogleLoginPage = function () {
 	}
 
 	this.approveAccess = function() {
-		browser.driver.sleep(2000);
+		browser.driver.sleep(5000);
 		browser.driver.findElement(by.id('submit_approve_access')).click();
 
 	}
