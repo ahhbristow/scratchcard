@@ -14,8 +14,9 @@ var credentials = {key: private_key, cert: private_cert};
 
 // TODO: Move to a middleware file.
 function redirectToHTTPS(req,res,next) {
-	if(req.headers['x-forwarded-proto']!='https') {
-		res.redirect('https://' + req.host + req.url)
+	if (req.headers['x-forwarded-proto'] != 'https') {
+		res.redirect('https://' + req.hostname + req.originalUrl);
+		console.log("Redirecting to https://" + req.hostname + req.originalUrl);
 	} else {
 		next() /* Continue to other routes if we're not redirecting */
 	}
