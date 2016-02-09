@@ -3,11 +3,15 @@ var Schema = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
 
 var user = new Schema({
-	email: {type: String, required: true, unique: true, index: true}
+	google: {
+		id           : String,
+    		token        : String,
+    		email        : String,
+    		name         : String,
+    		picture      : String
+	}
 });
 
-
-user.plugin(passportLocalMongoose);
 
 var User = mongoose.model('User',user);
 

@@ -17,12 +17,14 @@ module.exports = function(passport) {
 		res.render('pages/index');
 	});
 
-	// Perform login
-	router.post('/login', passport.authenticate('local',{
-		successRedirect:'/',
-		failureRedirect:'/login',
-		failureFlash: true
-	}));
+	// Perform authentication with Google
+	router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+
+	router.get('/auth/google/callback',
+		passport.authenticate('google', {
+			successRedirect : '/',
+			failureRedirect : '/login'
+		}));
 
 	// Get login page
 	router.get('/login', function(req, res) {
@@ -36,35 +38,6 @@ module.exports = function(passport) {
 	});
 
 
-	// Perform new registration
-	// TODO: Move to middleware
-	router.post('/register', function(req, res, next) {
-
-		var new_user = new User({
-			username: req.body.username,
-			password: req.body.password,
-			email: req.body.email
-		});
-
-		// TODO: Validate user here
-
-		User.register(new_user, req.body.password, function(err, user) {
-
-			// Redirect to login and show an error if we couldn't register
-			if (err) {
-				console.log("Registration error: " + err);
-				var error_msg = "Sorry, we could not create your account: " + err;
-				req.flash('error', error_msg);
-				return res.render('pages/login', {message: req.flash('error')});
-			}
-
-			console.log("Registration successful, redirecting to sessions");
-			passport.authenticate('local')(req, res, function () {
-				res.redirect('/');
-			});
-		});
-	});
-
 	// TODO: Move to middleware
 	// Get all sessions for this user as JSON
 	router.get('/sessions', auth, function(req, res, next) {
@@ -73,20 +46,19 @@ module.exports = function(passport) {
 		// logged in as.
 		var user = req.user;
 		CardsSession.find({creator: user._id})
-		   .populate('creator','username')
-	           .exec(function (err, data) {
+		.populate('creator','username')
+		.exec(function (err, data) {
 			if (err) return next(err);
-			
+
 			var resp = {};
 			resp.user = user;
 			resp.sessions = data;
 
 			// Get participating sessions
 			CardsSession.find({participants: user._id})
-			  .populate('participant')
-			  .exec(function (err, data) {
+			.populate('participant')
+			.exec(function (err, data) {
 				resp.participating_sessions = data;
-				console.log(resp);
 				res.json(resp);
 			});
 		});
@@ -95,6 +67,10 @@ module.exports = function(passport) {
 	// Add new session
 	router.post('/sessions', auth, function(req, res, next) {
 		console.log("Adding new card");
+
+		// Generate a random hash to use in the URL as a
+		// session ID
+
 		CardsSession.create(req.body, function (err, post) {
 			if (err) return next(err);
 			res.json(post);
@@ -104,14 +80,13 @@ module.exports = function(passport) {
 	// Get a session as JSON
 	router.get('/sessions/:id', auth, function(req, res, next) {
 		CardsSession.findById(req.params.id)
-	           .populate('participants','username')
-		   .exec(function (err, data) {
+		.populate('participants','username')
+		.exec(function (err, data) {
 			if (err) return next(err);
 
 			var resp = {};
 			resp.user = req.user;
 			resp.session = data;
-			console.log(resp);
 			res.json(resp);
 		});
 	});

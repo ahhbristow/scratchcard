@@ -1,3 +1,4 @@
+var fs = require('fs');
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
@@ -7,7 +8,10 @@ var bodyParser = require('body-parser');
 //=======================
 // Initialise app
 var app = express();
-var server = require('http').createServer(app);  
+var private_key  = fs.readFileSync('certs/server.key');
+var private_cert = fs.readFileSync('certs/server.crt');
+var credentials = {key: private_key, cert: private_cert};
+var server = require('https').createServer(credentials,app);
 
 
 //=======================
@@ -56,12 +60,11 @@ app.use(session({
 //=======================
 // Configure Passport
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+var auth_config = require(__dirname + '/config/auth');
+var google_auth = require(__dirname + '/init/google_auth.js')(passport, auth_config);
+
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 //=======================
 // Configure Socket IO
@@ -73,19 +76,19 @@ io.set('transports', ['websocket']);
 // Socket auth
 var passportSocketIo = require("passport.socketio");
 io.use(passportSocketIo.authorize({
-  cookieParser: cookieParser,       // the same middleware you registrer in express
-  key:          'connect.sid',       // the name of the cookie where express/connect stores its session_id
-  secret:       'billythefish',    // the session_secret to parse the cookie
-  store:        SessionStore,        // we NEED to use a sessionstore. no memorystore please
-  success:      onAuthorizeSuccess,  // *optional* callback on success - read more below
-  fail:         onAuthorizeFail,     // *optional* callback on fail/error - read more below
+  cookieParser: cookieParser,
+  key:          'connect.sid',
+  secret:       auth_config.cookie_secret,
+  store:        SessionStore,
+  success:      onAuthorizeSuccess,
+  fail:         onAuthorizeFail,
 }));
 function onAuthorizeSuccess(data,accept) {
 	console.log('SUCCESSFUL connection to socket.io');
 	accept(null,true);
 }
 function onAuthorizeFail(data,message,error,accept) {
-	console.log('FAILED connection to socket.io');
+	console.log('FAILED connection to socket.io: ' + message);
 	accept(null,false);
 }
 

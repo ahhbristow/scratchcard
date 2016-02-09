@@ -49,25 +49,39 @@ h1#session_name {
 	clear: both;
 }
 
-#menu_bar {
+#menu_controls {
 	position: fixed;
-	top: 0;
-	right: 0;
-	padding: 5px;
-	z-index: 0;
+	top: 5px;
+	right: 5px;
 }
-#menu_bar #username {
-	float: right;
-	margin-right: 50px;
-	padding-top: 5px;
+#menu_controls img {
+	float:right;
+	border-radius: 50%;
+	margin-right: 20px;
 }
-#logout {
+#menu_controls #username {
 	float: right;
+	margin-right: 20px;
+	padding-top: 15px;
+}
+#menu_controls #logout {
+	float: right;
+	margin-top: 10px;
 }
 
 #content {
 	padding-left: 40px;
 	margin-top: 20px;
+}
+
+
+#sign_in_button {
+	margin: 50px auto;
+	display: block;
+	width: 191px;
+	height: 46px;
+	background-repeat: no-repeat;
+	background-image: url('/static/images/google_signin_buttons/web/1x/btn_google_signin_dark_normal_web.png');
 }
 
 /*

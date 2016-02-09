@@ -5,7 +5,7 @@ machine:
 test:
         pre:
                 - webdriver-manager update
-                - webdriver-manager start:
+                - webdriver-manager --ignore_ssl start:
                         background: true
                 - npm start:
                         background: true
