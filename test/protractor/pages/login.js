@@ -1,35 +1,28 @@
+var GoogleLoginPage = require('./google_login');
+var TestConfig = require(__dirname + '/../../../config/test');
 var LoginPage = function () {
 
 	this.get = function() {
-		browser.get('http://localhost:4072/');
+		browser.get('https://localhost:4072/');
 	}
 
-	// TODO: Make this look for a specific email
-	// error
-	this.hasMissingEmailError = function() {
-		return element(by.id('error_messages')).isPresent();
-	}
-	this.hasMissingPasswordError = function() {
-		return element(by.id('error_messages')).isPresent();
-	}
-	this.hasMissingUsernameError = function() {
-		return element(by.id('error_messages')).isPresent();
-	}
-	this.hasDuplicateEmailError = function() {
-		return element(by.id('error_messages')).isPresent();
-	}
-	this.hasDuplicateUsernameError = function() {
-		return element(by.id('error_messages')).isPresent();
+	this.login = function() {
+		// Login to the first browser
+		element(by.id('sign_in_button')).click();
+		var google_login_page = new GoogleLoginPage();
+		google_login_page.submitEmail(TestConfig.gmail);
+		google_login_page.submitPassword(TestConfig.gmail_password);
+		google_login_page.approveAccess();
 	}
 
-	this.register = function(username,password,email) {
-		element(by.id('new_username')).click();
-		element(by.id('new_username')).sendKeys(username);
-		element(by.id('new_password')).click();
-		element(by.id('new_password')).sendKeys(password);
-		element(by.id('new_email')).click();
-		element(by.id('new_email')).sendKeys(email);
-		element(by.id('register')).click();
+
+
+	this.has_google_sign_in = function() {
+		if (element(by.id('sign_in_button'))) {
+			return true;
+		} else {
+			return false;	
+		};
 	}
 };
 

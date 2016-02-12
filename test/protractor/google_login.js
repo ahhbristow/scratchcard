@@ -1,23 +1,19 @@
-var GoogleLoginPage = require('./pages/google_login');
-var TestConfig = require(__dirname + '/../../config/test');
-describe('Creating a session',function() {
+var LoginPage = require('./pages/login');
+var SessionListPage = require('./pages/session_list');
+describe('Logging into the app',function() {
 
-	var session_name;
+	var login_page = new LoginPage();
+	var session_list_page = new SessionListPage();
 
-	beforeAll(function() {
-		// Login to the first browser
-		browser.driver.get('https://localhost:4072/');
-		element(by.id('sign_in_button')).click();
-		var google_login_page = new GoogleLoginPage();
-		google_login_page.submitEmail(TestConfig.gmail);
-		google_login_page.submitPassword(TestConfig.gmail_password);
-		google_login_page.approveAccess();
-
+	it('should show the home page',function() {
+		login_page.get();
+		expect(login_page.has_google_sign_in()).toBe(true);
 	});
 
-	it('should show the name of the user',function() {
-		var username = element(by.id('username')).getText();
-		expect(username).toBe('Hello, Shaun Bristow');
-	});
+	it('should redirect to the sessions screen after logging in via Google',function() {
+		login_page.get();
+		login_page.login();
 
+		expect(session_list_page.has_page_loaded()).toBe(true);
+	});
 });

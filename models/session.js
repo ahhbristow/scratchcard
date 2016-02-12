@@ -16,4 +16,6 @@ var CardsSessionSchema = new mongoose.Schema({
     cards: [CardSchema]
 });
 
-module.exports = mongoose.model('CardsSession', CardsSessionSchema);
+var CardsSession = mongoose.model('CardsSession', CardsSessionSchema);
+
+module.exports = CardsSession;
