@@ -11,9 +11,13 @@ cards_app:
    - cards_db
   ports:
    - "4080:80"
-  # volumes:
-  #  - ./app:/home/$$USER/
+# volumes:
+#  - ./app:/home/$$USER/
   environment:
    - "NODE_ENV=development"
    - "MONGOLAB_URI=mongodb://mongo:27017/sessions"
    - "PORT=80"
+   # Google OAuths : https://console.developers.google.com
+   - "CLIENT_ID="
+   - "CLIENT_SECRET="
+   - "GOOGLE_CALLBACK="
