@@ -18,3 +18,8 @@ deployment:
                 branch: master
                 heroku:
                         appname: salty-basin-2309
+dependencies:
+   post:
+      - wget http://selenium-release.storage.googleapis.com/2.44/selenium-server-standalone-2.44.0.jar
+      - java -jar selenium-server-standalone-2.44.0.jar:
+            background: true
