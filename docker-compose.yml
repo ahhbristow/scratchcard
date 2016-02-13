@@ -1,0 +1,19 @@
+cards_db:
+  hostname: mongo
+  image: mongo:latest
+  ports:
+   - "27017:27017"
+#  volumes:
+#   - "$$(pwd)":/data
+cards_app:
+  build: .
+  links:
+   - cards_db
+  ports:
+   - "4080:80"
+  # volumes:
+  #  - ./app:/home/$$USER/
+  environment:
+   - "NODE_ENV=development"
+   - "MONGOLAB_URI=mongodb://mongo:27017/sessions"
+   - "PORT=80"
