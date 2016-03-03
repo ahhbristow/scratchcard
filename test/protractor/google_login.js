@@ -4,6 +4,12 @@ describe('Logging into the app',function() {
 
 	var login_page = new LoginPage();
 	var session_list_page = new SessionListPage();
+	beforeAll(function() {
+		browser.driver.get('https://localhost:4072/logout/');
+	});
+	afterAll(function() {
+		browser.driver.get('https://localhost:4072/logout/');
+	});
 
 	it('should show the home page',function() {
 		login_page.get();
