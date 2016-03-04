@@ -127,9 +127,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/static', express.static('public'));
 
 
-// Set up a httpserver on port 4072
-var port = process.env.PORT || 4072;
-server.listen(port); 
+// Set up a httpserver port
+var port = process.env.PORT;
+server.listen(port);
 
 // Load routes
 var routes = require('./routes/sessions')(passport);
@@ -150,7 +150,7 @@ app.sync_session = function(session_id) {
 	var cards = session_details.cards;
 	CardsSession.findByIdAndUpdate(session_id, {$set: {cards: cards}}, function (err, updated_session) {
 		if (err) {
-			console.log(err);	
+			console.log(err);
 		}
 
 		io.emit('sync', {
@@ -167,10 +167,10 @@ app.locals.sessions = [];
 
 
 // Receive socket connection
-io.on('connection', function(client) {  
+io.on('connection', function(client) {
 	console.log('Client connected...');
 
-	// Get the session from DB and story in memory 
+	// Get the session from DB and story in memory
 	client.on('join', function(data) {
 		console.log("Join");
 		var session_id = data.session_id;
@@ -188,7 +188,7 @@ io.on('connection', function(client) {
 		app.sync_session(session_id);
 	});
 
-	// Update the session 
+	// Update the session
 	client.on('move', function(data) {
 		app.locals.sessions[data.session_id] = data.session_details;
 		client.broadcast.emit('sync', {
