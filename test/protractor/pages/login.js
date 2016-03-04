@@ -14,15 +14,26 @@ var LoginPage = function () {
 		// If we've logged into Google already, then the
 		// credentials don't need to be entered again and
 		// Google redirects straight back to the app.
-		if(google_login_page.isQuickLogin() == "true") {
-			console.log("Is quick login");
-			google_login_page.performQuickLogin();
-		} else if(google_login_page.isLoaded()) {
-			console.log("Performing full login");
-			google_login_page.submitEmail(TestConfig.gmail);
-			google_login_page.submitPassword(TestConfig.gmail_password);
-			google_login_page.approveAccess();
-		}
+		google_login_page.isQuickLogin().then(function(result) {
+			if (result == "true") {
+				console.log("On quick login page, performing quick login");
+				google_login_page.performQuickLogin();
+
+			} else {
+				google_login_page.emailPageLoaded().then(function(result) {
+					console.log("On Email entry page? " + result);
+					if (result === true) {
+						console.log("Performing full Google login");
+						google_login_page.submitEmail(TestConfig.gmail);
+						google_login_page.submitPassword(TestConfig.gmail_password);
+						google_login_page.approveAccess();
+
+					} else {
+						// Do nothing, we should have logged in
+					}
+				});
+			}
+		});
 	}
 
 

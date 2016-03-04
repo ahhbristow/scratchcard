@@ -3,7 +3,7 @@ var GoogleLoginPage = require('./pages/google_login');
 var TestConfig = require(__dirname + '/../../config/test');
 
 exports.config = {
-	specs: ['google_login.js'],
+	specs: ['google_login.js','sessions.js'],
 	seleniumAddress: 'http://localhost:4444/wd/hub',
 	onPrepare: function() {
 
