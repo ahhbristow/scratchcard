@@ -5,13 +5,11 @@ var GoogleLoginPage = function () {
 
 	this.submitEmail = function(email) {
 		browser.driver.findElement(by.id('Email')).sendKeys(email);
-		browser.driver.findElement(by.id('next')).click();
 	}
 
 	this.submitPassword = function(password) {
 		browser.driver.sleep(2000);
 		browser.driver.findElement(by.id('Passwd')).sendKeys(password)
-		browser.driver.findElement(by.id('signIn')).click();
 	}
 
 	this.approveAccess = function() {
@@ -30,6 +28,12 @@ var GoogleLoginPage = function () {
 	this.performQuickLogin = function() {
 		var account_button = browser.driver.findElement(by.id('account-' + TestConfig.gmail));
 		account_button.click();
+	}
+	this.performFullLogin = function() {
+		this.submitEmail(TestConfig.gmail);
+		this.submitPassword(TestConfig.gmail_password);
+		browser.driver.findElement(by.id('signIn')).click();
+		this.approveAccess();
 	}
 
 	// Checks whether the main Google Login page has been loaded

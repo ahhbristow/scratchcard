@@ -40,7 +40,7 @@ h1#session_name {
 	z-index:-1;
 }
 
-#title {
+#login_header #title {
 	font-size: 80px;
 	text-align: center;
 }

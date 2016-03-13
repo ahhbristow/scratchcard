@@ -24,10 +24,7 @@ var LoginPage = function () {
 					console.log("On Email entry page? " + result);
 					if (result === true) {
 						console.log("Performing full Google login");
-						google_login_page.submitEmail(TestConfig.gmail);
-						google_login_page.submitPassword(TestConfig.gmail_password);
-						google_login_page.approveAccess();
-
+						google_login_page.performFullLogin();
 					} else {
 						// Do nothing, we should have logged in
 					}
