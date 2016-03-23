@@ -146,7 +146,7 @@ app.use('/', routes);
  */
 app.sync_session = function(session_id) {
 
-	var session_details = app.locals.sessions[session_id];
+	var session_details = app.locals.cardssessions[session_id];
 	var cards = session_details.cards;
 	CardsSession.findByIdAndUpdate(session_id, {$set: {cards: cards}}, function (err, updated_session) {
 		if (err) {
@@ -161,7 +161,7 @@ app.sync_session = function(session_id) {
 }
 
 // Init empty array of sessions
-app.locals.sessions = [];
+app.locals.cardssessions = [];
 
 // ======== Handlers ===============
 
@@ -175,11 +175,13 @@ io.on('connection', function(client) {
 		console.log("Join");
 		var session_id = data.session_id;
 		client.join(session_id);
-		CardsSession.findById(session_id, function (err, session_details) {
+		CardsSession.findById(session_id, function (err, session) {
 			if (err) return next(err);
-			app.locals.sessions[session_id] = session_details
+			app.locals.cardssessions[session_id] = session;
 		});
 	});
+
+
 
 	// Client will send a move_end message once
 	// dragging has stopped.  We sync at this point
@@ -188,13 +190,41 @@ io.on('connection', function(client) {
 		app.sync_session(session_id);
 	});
 
+
+
 	// Update the session 
 	client.on('move', function(data) {
-		app.locals.sessions[data.session_id] = data.session_details;
+		app.locals.cardssessions[data.session_id] = data.session_details;
 		client.broadcast.emit('sync', {
 			"session_id": data.session_id,
 			"session": data.session_details
 		});
+	});
+
+
+
+	// Handle a request to join a session
+	client.on('request_permission',function(data) {
+
+		var user_id = data.user_id;
+		var session_id = data.session_id;
+		console.log("User " + user_id + " requesting permission to session " + session_id);
+		var session = app.locals.cardssessions[session_id];
+		session.requestParticipation(user_id).then(function() {
+			// Success
+			console.log("Session saved, permission requested");
+			client.emit('request_permission_cb', {
+				status: "success"
+			});
+			console.log("Emitted callback");
+		},function() {
+			// Error
+			console.log("Session unsaved, permission not requested");
+			client.emit('request_permission_cb', {
+				status: "error"
+			});
+		});
+
 	});
 
 });

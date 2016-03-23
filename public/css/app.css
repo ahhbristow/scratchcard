@@ -200,3 +200,13 @@ div.sessions h2 {
 	margin-right: 5px;
 }
 
+#participants img {
+	border-radius: 50%;
+}
+#participants #pending_participants img {
+	opacity: 0.2;
+}
+#participants span {
+	display: none;
+}
+

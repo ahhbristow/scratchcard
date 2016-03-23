@@ -5,6 +5,7 @@ var GoogleLoginPage = function () {
 
 	this.submitEmail = function(email) {
 		browser.driver.findElement(by.id('Email')).sendKeys(email);
+		browser.driver.findElement(by.id('next')).click();
 	}
 
 	this.submitPassword = function(password) {

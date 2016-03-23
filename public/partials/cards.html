@@ -1,25 +1,50 @@
 <ng-include src="'/static/partials/menu.html'"></ng-include>
 
 <div id="content">
+
 	<div id="header">
 		<button id="back_to_sessions" ng-click="goBackToSessions()">sessions/</button>
 		<h1 id="session_name">{{session.name}}</h1>
 	</div>
+
+
 	<div id="cards">
 		<div class="card" ng-repeat="card in session.cards" draggable x="card.x" y="card.y" ng-style="{top:card.y,left:card.x}" ng-dblclick="deleteCard(card, $event)">
 			<textarea class="{{card.type}}" ng-change="updateText()" ng-blur="saveCard()" ng-model="card.text"></textarea>
 		</div>
 	</div>
+
+	<div ng-if="user_has_permission !== 1" id="permission_control">
+
+		<div ng-if="permission_already_requested === 1">
+			<p>Awaiting approval from session owner</p>
+		</div>
+
+		<div ng-if="permission_already_requested !== 1"> 
+			<p>You do not have permission to view this session</p>
+			<button id="request_permission" ng-click="requestPermission()">Request Permission</button>
+	</div>
+
 </div>
-<div id="control_bar">
+
+
+<div ng-if="user_has_permission === 1" id="control_bar">
 	<button id="question" class="btn question" ng-click="addCard('question', $event)">Question</button>
 	<button class="btn story" ng-click="addCard('story', $event)">Story</button>
 	<button class="btn rule" ng-click="addCard('rule', $event)">Rule</button>
 	<button class="btn example" ng-click="addCard('example', $event)">Example</button>
 
 	<div id="participants">
-		<ul style="display: inline;">
-			<li class="participant" ng-repeat="participant in session.participants">{{ participant.username }}</li>
+		<ul id="active_participants" style="display: inline;">
+			<li class="participant" ng-repeat="participant in session.participants | filter: {status: 'A'}">{{ participant.user_id.google.name }}</li>
+		</ul>
+		<ul id="pending_participants" style="display: inline;">
+			<li class="participant" ng-repeat="participant in session.participants | filter: {status: 'P'}">
+			<span>{{ participant.user_id.google.name }}</span>
+			<img src="{{participant.user_id.google.picture}}" />
+			</li>
 		</ul>
 	</div>
+</div>
+
 </div>

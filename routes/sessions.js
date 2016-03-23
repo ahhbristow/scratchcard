@@ -1,6 +1,7 @@
 var express = require('express');
 var flash = require('connect-flash');
 var router = express.Router();
+var app = express();
 
 // Load models
 var CardsSession = require(__dirname + '/../models/session.js');
@@ -80,13 +81,31 @@ module.exports = function(passport) {
 	// Get a session as JSON
 	router.get('/sessions/:id', auth, function(req, res, next) {
 		CardsSession.findById(req.params.id)
-		.populate('participants','username')
-		.exec(function (err, data) {
+		.populate('participants.user_id')
+		.exec(function (err, session) {
 			if (err) return next(err);
 
 			var resp = {};
-			resp.user = req.user;
-			resp.session = data;
+			var user = req.user;
+			resp.user = user;
+
+			// If the user doesn't have permission to view this,
+			// return an error
+			if (user.hasPermission(session)) {
+				console.log("User has permission to view the session");
+				resp.has_permission = 1;
+				resp.session = session;
+			} else {
+				console.log("User does not have permission to view the session");
+				resp.session = {};
+				resp.has_permission = 0;
+			}
+
+			// If we haven't already, put this session
+			// in global mem to make it available for
+			// updates by all clients
+			req.app.locals.cardssessions[session._id] = session;
+			
 			res.json(resp);
 		});
 	});

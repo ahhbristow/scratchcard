@@ -14,6 +14,25 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	$scope.session_id = $routeParams.sessionId;
 	$scope.session = {};
 
+	$scope.requestPermission = function() {
+
+		var session_id = $scope.session_id;
+		var user_id = $scope.user._id;
+
+		// Send a websocket message asking for permission,
+		// then wait
+		socket.emit('request_permission', {
+			session_id:  session_id,
+			user_id:     user_id
+		}, function (result) {
+			if (!result) {
+				console.log("Error requesting permission");
+			}
+			// Reload session
+			$location.path('/sessions/' + session_id);
+		});
+	}
+
 	$scope.goBackToSessions = function() {
 		$location.path('/sessions');
 	}
@@ -44,26 +63,6 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		$scope.writeSession();
 	}
 
-	// Initial retrieval of cards
-	$scope.getCards = function(session_id) {
-		$http.get("/sessions/" + session_id).success(function (response) {
-			$scope.user = response.user;
-			$scope.session = response.session;
-	
-			// Check if this user has been here before and isn't the creator.
-			// If not, then add them
-			// TODO: Should we use jQuery here?
-			if ($.inArray($scope.user._id, $scope.session.participants) == -1 && 
-			    $scope.user._id != $scope.session.creator) {
-				console.log("Adding user to session");
-				$scope.session.participants.push($scope.user._id);	
-			}
-			
-
-		});
-	}
-	$scope.getCards($scope.session_id);
-	
 
 	// Handlers for moving cards
 	//
@@ -124,6 +123,15 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 			$scope.session = session_details;
 		}
 	});
+
+
+	$scope.handlePermissionCB = function(msg) {
+		console.log("Permission request successful");
+	}
+	socket.on('request_permission_cb', function(msg) {
+		$scope.handlePermissionCB(msg);
+	});
+		
 	$scope.handleMoveMsg = function(msg) {
 	
 		var card_id = msg._id;
@@ -150,6 +158,29 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		window.location.href = "/logout";
 	}
 
+	
+	// Initial retrieval of session on page load
+	$scope.getCards = function(session_id) {
+		$http.get("/sessions/" + session_id).success(function (response) {
+
+			// Get info from response
+			var session = response.session;
+			var user_has_permission = response.has_permission;
+
+			// Populate $scope
+			$scope.user_has_permission = user_has_permission;
+			$scope.user = response.user;
+
+			if(!user_has_permission) {
+				var permission_already_requested = 1;
+				$scope.permission_already_requested = permission_already_requested;
+				$scope.session = {};
+			} else {
+				$scope.session = response.session;
+			}
+		});
+	}
+	$scope.getCards($scope.session_id);
 }]);
 
 
