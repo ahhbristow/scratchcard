@@ -16,11 +16,11 @@
 
 	<div ng-if="user_has_permission !== 1" id="permission_control">
 
-		<div ng-if="permission_already_requested === 1">
+		<div ng-if="permission_requested === 1">
 			<p>Awaiting approval from session owner</p>
 		</div>
 
-		<div ng-if="permission_already_requested !== 1"> 
+		<div ng-if="permission_requested !== 1"> 
 			<p>You do not have permission to view this session</p>
 			<button id="request_permission" ng-click="requestPermission()">Request Permission</button>
 	</div>
@@ -40,8 +40,13 @@
 		</ul>
 		<ul id="pending_participants" style="display: inline;">
 			<li class="participant" ng-repeat="participant in session.participants | filter: {status: 'P'}">
-			<span>{{ participant.user_id.google.name }}</span>
-			<img src="{{participant.user_id.google.picture}}" />
+				<div class="approval_popup">
+					<button class="approve" ng-click="approveParticipant(participant.user_id._id)">Approve</button>
+					<button class="reject">Reject</button>
+				</div>
+				<span>{{ participant.user_id.google.name }}</span>
+				<img src="{{participant.user_id.google.picture}}" />
+
 			</li>
 		</ul>
 	</div>

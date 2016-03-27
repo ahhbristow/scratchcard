@@ -210,3 +210,11 @@ div.sessions h2 {
 	display: none;
 }
 
+#participants .participant {
+	position: relative;
+}
+#participants .participant .approval_popup {
+	position: absolute;
+	top: -80px;
+}
+

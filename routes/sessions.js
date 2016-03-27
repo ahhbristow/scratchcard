@@ -91,7 +91,7 @@ module.exports = function(passport) {
 
 			// If the user doesn't have permission to view this,
 			// return an error
-			if (user.hasPermission(session)) {
+			if (session.accessibleBy(user)) {
 				console.log("User has permission to view the session");
 				resp.has_permission = 1;
 				resp.session = session;
@@ -99,6 +99,7 @@ module.exports = function(passport) {
 				console.log("User does not have permission to view the session");
 				resp.session = {};
 				resp.has_permission = 0;
+				resp.permission_requested = session.hasPending(user);
 			}
 
 			// If we haven't already, put this session
@@ -108,6 +109,22 @@ module.exports = function(passport) {
 			
 			res.json(resp);
 		});
+	});
+
+
+	// Approve a participant.  Update internal representation
+	// of session and return it
+	router.put('/sessions/:session_id/approveParticipant/:user_id', auth, function(req, res, next) {
+		var user_id = req.params.user_id;
+		var session_id = req.params.session_id;
+
+		
+		var session = req.app.locals.cardssessions[session_id];
+		session.approveParticipant(user_id).then(function() {	
+			var status = 1;
+			res.json({"status": status, "session": session});
+		});
+
 	});
 
 	// Update a session

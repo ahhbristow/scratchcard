@@ -40,3 +40,27 @@ cardsApp.directive('draggable', function() {
 		}
 	};
 });
+
+cardsApp.directive('partipant', function() {
+	return {
+		restrict:'C',
+		link: function(scope, element, attrs) {
+			$(element).mouseover(function() {
+				element.children(".approval_popup").show();
+			});
+			$(element).mouseout(function() {
+				element.children(".approval_popup").hide();
+			});
+
+
+			// Add mouse states to all children
+			$(element).children(".approval_popup").mouseover(function() {
+				$(this).show();
+			});
+			$(element).children(".approval_popup").mouseout(function() {
+				$(this).hide();
+			});
+		}
+	}
+			
+});

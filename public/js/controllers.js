@@ -152,6 +152,22 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		}
 	}
 
+	// Post approval, then update scope
+	$scope.approveParticipant = function(user_id) {
+		console.log("Approving user " + user_id);
+
+		var path = '/sessions/' + this.session_id + '/approveParticipant/' + user_id;
+		$http.put(path).
+ 			success(function(resp, status, headers, config) {
+				var approved = resp.status;
+				var session  = resp.session;
+				console.log("Approval status: " + approved);
+
+				$scope.session = session;
+		});
+
+	}
+
 	// TODO: Should go in it's own controller
 	$scope.logout = function() {
 		console.log("Logging out");
@@ -166,14 +182,16 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 			// Get info from response
 			var session = response.session;
 			var user_has_permission = response.has_permission;
+			var permission_requested = response.permission_requested;
 
 			// Populate $scope
 			$scope.user_has_permission = user_has_permission;
+			$scope.permission_requested = permission_requested;
 			$scope.user = response.user;
 
+			// If user doesn't have permission, set the session
+			// as an empty object
 			if(!user_has_permission) {
-				var permission_already_requested = 1;
-				$scope.permission_already_requested = permission_already_requested;
 				$scope.session = {};
 			} else {
 				$scope.session = response.session;
