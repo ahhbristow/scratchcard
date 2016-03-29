@@ -13,6 +13,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	// Init
 	$scope.session_id = $routeParams.sessionId;
 	$scope.session = {};
+	$scope.connected_users = {};
 
 	$scope.requestPermission = function() {
 
@@ -115,15 +116,18 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	socket.on('move', function(msg){
 		$scope.handleMoveMsg(msg)
 	});
+
+	// Handle full session sync
 	socket.on('sync', function(msg) {
 		var session_id      = msg.session_id;
 		var session_details = msg.session;
+		var connected_users = msg.connected_users;
 
 		if ($scope.session_id == session_id) {
-			$scope.session = session_details;
+			$scope.session = session_details;	
+			$scope.connected_users = connected_users;
 		}
 	});
-
 
 	$scope.handlePermissionCB = function(msg) {
 		console.log("Permission request successful");
@@ -174,6 +178,18 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		window.location.href = "/logout";
 	}
 
+	// Join the websocket session
+	$scope.joinSession=function() {
+		socket.emit('join', {
+			user_id:     $scope.user._id,
+			session_id:  $scope.session_id
+		}, function (result) {
+			if (!result) {
+				console.log("Error emitting 'join'");
+			}
+			console.log(result);
+		});
+	}
 	
 	// Initial retrieval of session on page load
 	$scope.getCards = function(session_id) {
@@ -195,7 +211,9 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 				$scope.session = {};
 			} else {
 				$scope.session = response.session;
+				$scope.joinSession();  // Socket connection
 			}
+	
 		});
 	}
 	$scope.getCards($scope.session_id);

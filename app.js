@@ -68,9 +68,9 @@ var User = require(__dirname + '/models/user.js');
 var flash = require('connect-flash');
 app.use(flash());
 
-
 //=======================
 // Configure Sessions
+var auth_config = require(__dirname + '/config/auth');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var SessionStore = new MongoStore({
@@ -79,13 +79,12 @@ var SessionStore = new MongoStore({
 app.use(cookieParser());
 app.use(session({
 	store: SessionStore,
-	secret: 'billythefish'
+	secret: auth_config.cookie_secret
 }));
 
 //=======================
 // Configure Passport
 var passport = require('passport');
-var auth_config = require(__dirname + '/config/auth');
 var google_auth = require(__dirname + '/init/google_auth.js')(passport, auth_config);
 
 app.use(passport.initialize());
@@ -139,15 +138,19 @@ app.use('/', routes);
 
 /* =========== Other functions ============== */
 
-/*
+/* TODO: Replace with save() call
  * app.sync_session
  *
  * Write the entire session object to the DB
  */
 app.sync_session = function(session_id) {
 
-	var session_details = app.locals.cardssessions[session_id];
+	console.log("Synchronising to all clients");
+
+	var session_details = app.locals.cardssessions[session_id].session;
+	var connected_users = app.locals.cardssessions[session_id].connected_users;
 	var cards = session_details.cards;
+
 	CardsSession.findByIdAndUpdate(session_id, {$set: {cards: cards}}, function (err, updated_session) {
 		if (err) {
 			console.log(err);	
@@ -155,7 +158,8 @@ app.sync_session = function(session_id) {
 
 		io.emit('sync', {
 			"session_id": session_id,
-			"session": session_details
+			"session": session_details,
+			"connected_users": connected_users
 		});
 	});
 }
@@ -167,20 +171,26 @@ app.locals.cardssessions = [];
 
 
 // Receive socket connection
-io.on('connection', function(client) {  
-	console.log('Client connected...');
-
-	// Get the session from DB and story in memory 
+io.on('connection', function(client) {
+	
+	
+	// Add the client to the connected clients for the specified session 
 	client.on('join', function(data) {
-		console.log("Join");
+		var user_id = data.user_id;
 		var session_id = data.session_id;
-		client.join(session_id);
-		CardsSession.findById(session_id, function (err, session) {
-			if (err) return next(err);
-			app.locals.cardssessions[session_id] = session;
-		});
-	});
+		console.log("User " + user_id + " joining session " + session_id);
 
+		// Get the participant, and set it to connected
+		var session = app.locals.cardssessions[data.session_id].session;
+		var participant = session.getParticipant(user_id);
+		app.locals.cardssessions[session_id].connected_users[user_id] = {
+			user: participant,
+			connected: 1
+		}
+
+		// Sync the entire session so all clients receive the update
+		app.sync_session(session_id);	
+	});
 
 
 	// Client will send a move_end message once
@@ -192,12 +202,16 @@ io.on('connection', function(client) {
 
 
 
-	// Update the session 
+	// Update the session
+	// TODO: There's a security hole here where the user can
+	// basically do whatever they want to the session and
+	// get it saved in the DB. Need to filter the user input 
 	client.on('move', function(data) {
-		app.locals.cardssessions[data.session_id] = data.session_details;
+		app.locals.cardssessions[data.session_id].session.cards = data.session_details.cards;
+		console.log(app.locals.cardssessions[data.session_id]);
 		client.broadcast.emit('sync', {
 			"session_id": data.session_id,
-			"session": data.session_details
+			"session": app.locals.cardssessions[data.session_id].session
 		});
 	});
 
@@ -209,14 +223,14 @@ io.on('connection', function(client) {
 		var user_id = data.user_id;
 		var session_id = data.session_id;
 		console.log("User " + user_id + " requesting permission to session " + session_id);
-		var session = app.locals.cardssessions[session_id];
+		var session = app.locals.cardssessions[session_id].session;
 		session.requestParticipation(user_id).then(function() {
 			// Success
 			console.log("Session saved, permission requested");
 			client.emit('request_permission_cb', {
 				status: "success"
 			});
-			console.log("Emitted callback");
+
 		},function() {
 			// Error
 			console.log("Session unsaved, permission not requested");

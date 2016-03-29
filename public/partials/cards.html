@@ -36,7 +36,19 @@
 
 	<div id="participants">
 		<ul id="active_participants" style="display: inline;">
-			<li class="participant" ng-repeat="participant in session.participants | filter: {status: 'A'}">{{ participant.user_id.google.name }}</li>
+			<li class="participant" ng-repeat="participant in session.participants | filter: {status: 'A'}">
+
+				<div class="connected" ng-if="connected_users[participant.user_id._id].connected == 1">
+					<span>{{ participant.user_id.google.name }}</span>
+					<img src="{{participant.user_id.google.picture}}" />
+				</div>
+				
+				<div class="disconnected" ng-if="connected_users[participant.user_id._id].connected != 1">
+					<span>{{ participant.user_id.google.name }}</span>
+					<img src="{{participant.user_id.google.picture}}" />
+				</div>
+			</li>
+
 		</ul>
 		<ul id="pending_participants" style="display: inline;">
 			<li class="participant" ng-repeat="participant in session.participants | filter: {status: 'P'}">

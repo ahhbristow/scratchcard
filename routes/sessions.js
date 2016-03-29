@@ -105,7 +105,11 @@ module.exports = function(passport) {
 			// If we haven't already, put this session
 			// in global mem to make it available for
 			// updates by all clients
-			req.app.locals.cardssessions[session._id] = session;
+			if (!req.app.locals.cardssessions[session._id]) {
+				req.app.locals.cardssessions[session._id] = {};
+				req.app.locals.cardssessions[session._id].connected_users = {};
+			}
+			req.app.locals.cardssessions[session._id].session = session;
 			
 			res.json(resp);
 		});
@@ -119,7 +123,7 @@ module.exports = function(passport) {
 		var session_id = req.params.session_id;
 
 		
-		var session = req.app.locals.cardssessions[session_id];
+		var session = req.app.locals.cardssessions[session_id].session;
 		session.approveParticipant(user_id).then(function() {	
 			var status = 1;
 			res.json({"status": status, "session": session});

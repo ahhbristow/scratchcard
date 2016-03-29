@@ -217,4 +217,7 @@ div.sessions h2 {
 	position: absolute;
 	top: -80px;
 }
+#participants .participant .disconnected {
+	opacity: 0.2;	
+}
 

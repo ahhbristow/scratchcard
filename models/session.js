@@ -22,7 +22,6 @@ var CardsSessionSchema = new Schema({
     cards: [CardSchema]
 });
 
-
 /*
  * Add user_id as a pending participant on session_id
  */
