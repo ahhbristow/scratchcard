@@ -39,8 +39,10 @@ module.exports = function(passport) {
 	});
 
 
-	// TODO: Move to middleware
-	// Get all sessions for this user as JSON
+	// Get a session as JSON.  If user doesn't have permission
+	// then return an error.
+	//
+	// Store the session in global mem
 	router.get('/sessions', auth, function(req, res, next) {
 
 		// Get all the sessions where the creator is the user we're
@@ -80,10 +82,9 @@ module.exports = function(passport) {
 
 	// Get a session as JSON
 	router.get('/sessions/:id', auth, function(req, res, next) {
-		CardsSession.findById(req.params.id)
-		.populate('participants.user_id')
-		.exec(function (err, session) {
-			if (err) return next(err);
+
+		CardsSession.getSession(req.params.id).then(function(session) {
+			console.log("Retrieved session " + req.params.id);
 
 			var resp = {};
 			var user = req.user;

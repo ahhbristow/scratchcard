@@ -2,8 +2,8 @@ var LoginPage = require('./pages/login');
 var SessionListPage = require('./pages/session_list');
 describe('Logging into the app',function() {
 
-	var login_page = new LoginPage();
-	var session_list_page = new SessionListPage();
+	var login_page = new LoginPage(browser,'primary');
+	var session_list_page = new SessionListPage(browser);
 	beforeAll(function() {
 		browser.driver.get('https://localhost:4072/logout/');
 	});

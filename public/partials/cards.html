@@ -16,7 +16,7 @@
 
 	<div ng-if="user_has_permission !== 1" id="permission_control">
 
-		<div ng-if="permission_requested === 1">
+		<div id="awaiting_approval_msg" ng-if="permission_requested === 1">
 			<p>Awaiting approval from session owner</p>
 		</div>
 

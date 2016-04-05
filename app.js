@@ -147,18 +147,20 @@ app.sync_session = function(session_id) {
 
 	console.log("Synchronising to all clients");
 
-	var session_details = app.locals.cardssessions[session_id].session;
-	var connected_users = app.locals.cardssessions[session_id].connected_users;
-	var cards = session_details.cards;
+	// Read the session from the DB
+	CardsSession.getSession(session_id).then(function(session) {
 
-	CardsSession.findByIdAndUpdate(session_id, {$set: {cards: cards}}, function (err, updated_session) {
-		if (err) {
-			console.log(err);	
-		}
+		console.log("Retrieved session " + session_id + " from DB as");
+		console.log(session);		
 
+		// Update global mem
+		app.locals.cardssessions[session_id].session = session;
+		
+		// Push to all clients
+		var connected_users = app.locals.cardssessions[session_id].connected_users;
 		io.emit('sync', {
 			"session_id": session_id,
-			"session": session_details,
+			"session": session,
 			"connected_users": connected_users
 		});
 	});
@@ -172,7 +174,6 @@ app.locals.cardssessions = [];
 
 // Receive socket connection
 io.on('connection', function(client) {
-	
 	
 	// Add the client to the connected clients for the specified session 
 	client.on('join', function(data) {
@@ -196,8 +197,22 @@ io.on('connection', function(client) {
 	// Client will send a move_end message once
 	// dragging has stopped.  We sync at this point
 	client.on('move_end', function(data) {
+		console.log("Client has stopped dragging.  Saving session");
 		var session_id = data.session_id;
-		app.sync_session(session_id);
+
+		// Write to DB
+		var session = app.locals.cardssessions[session_id].session;
+		console.log("Saving session to DB as:");
+		console.log(session);
+		session.save().then(function() {
+
+			// TODO:  This is inefficient as we already have the latest session
+			// in memory, but it's useful because
+			// it allows us to reload the session participants with their
+			// extra data (if there are new ones)
+			// Read from DB and sync
+			app.sync_session(session_id);
+		});
 	});
 
 
@@ -208,7 +223,6 @@ io.on('connection', function(client) {
 	// get it saved in the DB. Need to filter the user input 
 	client.on('move', function(data) {
 		app.locals.cardssessions[data.session_id].session.cards = data.session_details.cards;
-		console.log(app.locals.cardssessions[data.session_id]);
 		client.broadcast.emit('sync', {
 			"session_id": data.session_id,
 			"session": app.locals.cardssessions[data.session_id].session
@@ -218,11 +232,13 @@ io.on('connection', function(client) {
 
 
 	// Handle a request to join a session
+	// TODO: Convert to HTTP?
 	client.on('request_permission',function(data) {
 
 		var user_id = data.user_id;
 		var session_id = data.session_id;
 		console.log("User " + user_id + " requesting permission to session " + session_id);
+
 		var session = app.locals.cardssessions[session_id].session;
 		session.requestParticipation(user_id).then(function() {
 			// Success
@@ -230,6 +246,7 @@ io.on('connection', function(client) {
 			client.emit('request_permission_cb', {
 				status: "success"
 			});
+			app.sync_session(session_id);
 
 		},function() {
 			// Error

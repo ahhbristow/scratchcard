@@ -48,8 +48,6 @@ CardsSessionSchema.methods.approveParticipant = function(user_id) {
 	for (var i = 0; i < this.participants.length; i++) {
 		var participant = this.participants[i];
 
-		console.log("Checking " + participant.user_id._id + " against " + user_id);
-
 		if (participant.user_id._id == user_id) {
 			console.log("User " + user_id + " approved for session " + this._id);
 			participant.status = 'A';
@@ -114,6 +112,19 @@ CardsSessionSchema.methods.hasPending = function(user) {
 	} else {
 		return 0;
 	}
+}
+
+
+// =============================================
+// Static methods
+
+CardsSessionSchema.statics.getSession = function(session_id) {
+	return CardsSession.findById(session_id)
+	.populate('participants.user_id')
+	.exec(function (err, session) {
+		if (err) return next(err);
+		return session;
+	});
 }
 
 

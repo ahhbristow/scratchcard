@@ -1,15 +1,17 @@
 var GoogleLoginPage = require('./google_login');
 var TestConfig = require(__dirname + '/../../../config/test');
-var LoginPage = function () {
+var LoginPage = function (browser,account) {
+
+	this.browser = browser;
 
 	this.get = function() {
-		browser.driver.get('https://localhost:4072/');
+		this.browser.driver.get('https://localhost:4072/');
 	}
 
 	this.login = function() {
 		// Login to the first browser
-		browser.driver.findElement(by.id('sign_in_button')).click();
-		var google_login_page = new GoogleLoginPage();
+		this.browser.driver.findElement(by.id('sign_in_button')).click();
+		var google_login_page = new GoogleLoginPage(this.browser,account);
 
 		// If we've logged into Google already, then the
 		// credentials don't need to be entered again and
@@ -35,7 +37,7 @@ var LoginPage = function () {
 
 
 	this.has_google_sign_in = function() {
-		if (browser.driver.findElement(by.id('sign_in_button'))) {
+		if (this.browser.driver.findElement(by.id('sign_in_button'))) {
 			return true;
 		} else {
 			return false;	

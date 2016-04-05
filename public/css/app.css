@@ -145,11 +145,12 @@ div.sessions h2 {
 	padding: 5px;
 }
 #control_bar button {
-	padding: 5px;
+	padding: 10px;
 	width: 80px;
 	box-shadow: 2px 2px 10px #666;
 	float: left;
 	margin-right: 5px;
+	margin-top: 3px;
 }
 #control_bar #add_session {
 	width: 150px;
@@ -192,7 +193,6 @@ div.sessions h2 {
 #participants {
 	float: left;
 	margin-left: 40px;
-	margin-top: 10px;
 }
 
 #participants li {
@@ -202,6 +202,8 @@ div.sessions h2 {
 
 #participants img {
 	border-radius: 50%;
+	box-shadow: 0px 0px 10px yellowgreen;
+	border: 2px solid yellowgreen;
 }
 #participants #pending_participants img {
 	opacity: 0.2;

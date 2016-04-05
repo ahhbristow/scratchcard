@@ -2,8 +2,8 @@ var LoginPage = require('./pages/login');
 var SessionListPage = require('./pages/session_list');
 describe('Creating and accessing sessions',function() {
 
-	var session_list_page = new SessionListPage();
-	var login_page = new LoginPage();
+	var session_list_page = new SessionListPage(browser);
+	var login_page = new LoginPage(browser,'primary');
 
 	beforeAll(function() {
 		// Logout and back in again
