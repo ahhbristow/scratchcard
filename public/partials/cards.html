@@ -51,7 +51,7 @@
 
 		</ul>
 		<ul id="pending_participants" style="display: inline;">
-			<li class="participant" ng-repeat="participant in session.participants | filter: {status: 'P'}">
+			<li data-id="{{participant.user_id._id}}" class="participant" ng-repeat="participant in session.participants | filter: {status: 'P'}">
 				<div class="approval_popup">
 					<button class="approve" ng-click="approveParticipant(participant.user_id._id)">Approve</button>
 					<button class="reject">Reject</button>
