@@ -158,7 +158,7 @@ app.sync_session = function(session_id) {
 		
 		// Push to all clients
 		var connected_users = app.locals.cardssessions[session_id].connected_users;
-		io.emit('sync', {
+		io.to(session_id).emit('sync', {
 			"session_id": session_id,
 			"session": session,
 			"connected_users": connected_users
@@ -177,16 +177,25 @@ io.on('connection', function(client) {
 	
 	// Add the client to the connected clients for the specified session 
 	client.on('join', function(data) {
-		var user_id = data.user_id;
+
+		// Client is asking to join the room for this session
+		// Check they're allowed to
+		var user = client.request.user;
 		var session_id = data.session_id;
-		console.log("User " + user_id + " joining session " + session_id);
+		console.log("User " + user._id + " wants to connect to session " + session_id);
 
 		// Get the participant, and set it to connected
 		var session = app.locals.cardssessions[data.session_id].session;
-		var participant = session.getParticipant(user_id);
-		app.locals.cardssessions[session_id].connected_users[user_id] = {
-			user: participant,
-			connected: 1
+		if (session.accessibleBy(user)) {
+			client.join(session_id);
+		
+			app.locals.cardssessions[session_id].connected_users[user._id] = {
+				user: user,
+				connected: 1
+			}
+			console.log("User has permission, connection successful");
+		} else {
+			console.log("User doesn't have permission to connect");
 		}
 
 		// Sync the entire session so all clients receive the update
@@ -222,10 +231,11 @@ io.on('connection', function(client) {
 	// basically do whatever they want to the session and
 	// get it saved in the DB. Need to filter the user input 
 	client.on('move', function(data) {
-		app.locals.cardssessions[data.session_id].session.cards = data.session_details.cards;
-		client.broadcast.emit('sync', {
-			"session_id": data.session_id,
-			"session": app.locals.cardssessions[data.session_id].session
+		var session_id = data.session_id;
+		app.locals.cardssessions[session_id].session.cards = data.session_details.cards;
+		client.to(session_id).emit('sync', {
+			"session_id": session_id,
+			"session": app.locals.cardssessions[session_id].session
 		});
 	});
 

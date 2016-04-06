@@ -123,9 +123,6 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		var session_details = msg.session;
 		var connected_users = msg.connected_users;
 
-		console.log("Received sync message");
-		console.log(msg);
-
 		if ($scope.session_id == session_id) {
 			$scope.session = session_details;	
 			$scope.connected_users = connected_users;
