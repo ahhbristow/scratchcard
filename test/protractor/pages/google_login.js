@@ -1,8 +1,18 @@
 var TestConfig = require(__dirname + '/../../../config/test');
+var fs = require('fs');
 var GoogleLoginPage = function (browser, account) {
 
 	this.browser = browser;
 	this.browser.ignoreSynchronization = true;
+	
+
+	function writeScreenShot(browser, filename) {
+		return browser.takeScreenshot().then(function(png_data) {
+			var stream = fs.createWriteStream(filename);
+			stream.write(new Buffer(png_data, 'base64'));
+			stream.end();
+		});
+	}
 
 	// Tell this page object which Gmail account to use		
 	if (account != 'primary') {
@@ -24,6 +34,9 @@ var GoogleLoginPage = function (browser, account) {
 	}
 
 	this.approveAccess = function() {
+		var filename = this.email_address + '_approve_access.png';
+		writeScreenShot(this.browser,filename);
+
 		this.browser.driver.sleep(4000);
 		this.browser.driver.findElement(by.id('submit_approve_access')).click();
 		// Last Google page, so enable checking for Angular again
