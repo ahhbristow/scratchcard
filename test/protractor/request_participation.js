@@ -4,14 +4,14 @@ var SessionPage = require('./pages/session');
 
 describe('Requesting permission to participate in a session',function() {
 
-    var fs = require('fs');
- 
-    // abstract writing screen shot to a file
-    function writeScreenShot(data, filename) {
-        var stream = fs.createWriteStream(filename);
-        stream.write(new Buffer(data, 'base64'));
-        stream.end();
-    }
+	var fs = require('fs');
+
+	// abstract writing screen shot to a file
+	function writeScreenShot(data, filename) {
+		var stream = fs.createWriteStream(filename);
+		stream.write(new Buffer(data, 'base64'));
+		stream.end();
+	}
 
 	var session_list_page = new SessionListPage(browser);
 	var login_page = new LoginPage(browser, 'primary');
@@ -21,15 +21,29 @@ describe('Requesting permission to participate in a session',function() {
 	beforeAll(function() {
 		// Logout and back in again
 		browser.get('https://localhost:4072/logout/');
-		login_page.get();
-		login_page.login();
 
-		browser2.get('https://localhost:4072/logout/');
-		login_page2.get();
-		login_page2.login();
 
 		browser.takeScreenshot().then(function (png) {
-			writeScreenShot(png, '$CIRCLE_ARTIFACTS/after_login.png');
+			writeScreenShot(png, 'browser1_before_login.png');
+		}).then(function() {
+			login_page.get();
+			login_page.login();
+		}).then(function() {
+			return browser.takeScreenshot();
+		}).then(function(png) {
+			writeScreenShot(png, 'browser1_after_login.png');
+		});
+
+		browser2.get('https://localhost:4072/logout/');
+		browser2.takeScreenshot().then(function (png) {
+			writeScreenShot(png, 'browser2_before_login.png');
+		}).then(function() {
+			login_page2.get();
+			login_page2.login();
+		}).then(function() {
+			return browser2.takeScreenshot();
+		}).then(function(png) {
+			writeScreenShot(png, 'browser2_after_login.png');
 		});
 	});
 
