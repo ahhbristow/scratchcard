@@ -54,6 +54,9 @@ var GoogleLoginPage = function (browser, account) {
 		account_button.click();
 	}
 	this.performFullLogin = function() {
+		var filename = this.email_address + '_before_full_login.png';
+		writeScreenShot(this.browser,filename);
+
 		this.submitEmail(this.email_address);
 		this.submitPassword(this.password);
 		this.browser.driver.findElement(by.id('signIn')).click();
