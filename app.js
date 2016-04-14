@@ -141,7 +141,7 @@ app.use('/', routes);
 /* TODO: Replace with save() call
  * app.sync_session
  *
- * Write the entire session object to the DB
+ * Read from the DB and push out to all clients
  */
 app.sync_session = function(session_id) {
 
@@ -149,9 +149,6 @@ app.sync_session = function(session_id) {
 
 	// Read the session from the DB
 	CardsSession.getSession(session_id).then(function(session) {
-
-		console.log("Retrieved session " + session_id + " from DB as");
-		console.log(session);		
 
 		// Update global mem
 		app.locals.cardssessions[session_id].session = session;
@@ -163,6 +160,19 @@ app.sync_session = function(session_id) {
 			"session": session,
 			"connected_users": connected_users
 		});
+	});
+}
+/*
+ * Push out to all clients without reloading from the DB.
+ * Used for handling updates to card positions, where we
+ * don't need to sync major session updates (such as new
+ * participant)
+ */
+app.soft_sync_session = function(client, session_id) {
+	client.to(session_id).emit('sync', {
+		"session_id": session_id,
+		"session": app.locals.cardssessions[session_id].session,
+		"connected_users": app.locals.cardssessions[session_id].connected_users
 	});
 }
 
@@ -226,17 +236,15 @@ io.on('connection', function(client) {
 
 
 
-	// Update the session
-	// TODO: There's a security hole here where the user can
-	// basically do whatever they want to the session and
-	// get it saved in the DB. Need to filter the user input 
+	// Update the session with the new cards positions
 	client.on('move', function(data) {
 		var session_id = data.session_id;
 		app.locals.cardssessions[session_id].session.cards = data.session_details.cards;
-		client.to(session_id).emit('sync', {
-			"session_id": session_id,
-			"session": app.locals.cardssessions[session_id].session
-		});
+
+		// TODO: This is probably overkill for each
+		// drag move.  We should just push out the card
+		// deltas
+		app.soft_sync_session(client, session_id);
 	});
 
 
