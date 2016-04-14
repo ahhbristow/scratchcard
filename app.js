@@ -160,6 +160,7 @@ app.sync_session = function(session_id) {
 			"session": session,
 			"connected_users": connected_users
 		});
+		console.log(app.locals.cardssessions[session_id]);
 	});
 }
 /*

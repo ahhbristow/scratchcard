@@ -120,7 +120,7 @@ CardsSessionSchema.methods.hasPending = function(user) {
 
 CardsSessionSchema.statics.getSession = function(session_id) {
 	return CardsSession.findById(session_id)
-	.populate('participants.user_id')
+	.populate('participants.user_id creator')
 	.exec(function (err, session) {
 		if (err) return next(err);
 		return session;

@@ -35,6 +35,21 @@
 	<button class="btn example" ng-click="addCard('example', $event)">Example</button>
 
 	<div id="participants">
+
+		<ul id="creator" style="display: inline;">
+			<li class="participant">
+				<div class="connected" ng-if="connected_users[session.creator._id].connected == 1">
+					<span>{{ session.creator.google.name }}</span>
+					<img src="{{session.creator.google.picture}}" />
+				</div>
+				
+				<div class="disconnected" ng-if="connected_users[session.creator._id].connected != 1">
+					<span>{{ session.creator.google.name }}</span>
+					<img src="{{session.creator.google.picture}}" />
+				</div>
+			</li>
+		</ul>
+
 		<ul id="active_participants" style="display: inline;">
 			<li class="participant" ng-repeat="participant in session.participants | filter: {status: 'A'}">
 
