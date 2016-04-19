@@ -38,6 +38,15 @@ h1#session_name {
 
 #header {
 	z-index:-1;
+	margin-left: 30px;
+}
+#permission_control {
+	margin-left: 30px;
+	margin-top: 50px;
+}
+p.participation_info {
+	color: grey;
+	font-style: italic;
 }
 
 #login_header #title {
@@ -70,7 +79,6 @@ h1#session_name {
 }
 
 #content {
-	padding-left: 40px;
 	margin-top: 20px;
 }
 
@@ -90,22 +98,52 @@ h1#session_name {
 #cards {
 	z-index: 10000;
 }
-.card {
+.card_padding {
 	position: absolute;
+}
+.card {
 	background-color: rgb(168,168,168);
 	cursor: -webkit-grab;
 	cursor: -moz-grab;
 	border-radius: 10px;
 	box-shadow: 2px 10px 20px #aaa;
+	padding-top: 20px;
+}
+
+.card_padding .delete {
+	height: 40px;
+	width: 40px;
+	font-size: 20px;
+	font-weight: bold;
+	position: absolute;
+	top: -10px;
+	right: -10px;
+	border: 2px solid #fff;
+	background-color: salmon;
+	box-shadow: 0px 0px 5px #000;
+	color: white;
+	display: none;
+}
+/*
+.card_padding:hover .delete,
+.card_padding:active .delete,
+.card_padding .delete:hover,
+.card_padding .delete:active {
+	display: block;
+}*/
+.card_padding .delete:active {
+	background-color: red;
 }
 
 .card:active {
 	cursor: -webkit-grabbing;
 	cursor: -moz-grabbing;
 }
+.card:active .delete {
+	display: none;
+}
 
 textarea {
-	margin-top: 20px;
 	resize: none;
 	height:150px;
 	width:200px;
@@ -120,6 +158,7 @@ textarea {
 
 div.sessions {
 	margin-top: 30px;
+	margin-left: 50px;
 }
 div.sessions h2 {
 	font-size: 20px;
@@ -198,6 +237,7 @@ div.sessions h2 {
 #participants li {
 	float: left;
 	margin-right: 5px;
+	list-style: none;
 }
 
 #participants img {

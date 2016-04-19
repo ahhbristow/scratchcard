@@ -41,26 +41,32 @@ cardsApp.directive('draggable', function() {
 	};
 });
 
-cardsApp.directive('partipant', function() {
+cardsApp.directive('draggable', function() {
 	return {
-		restrict:'C',
+		//A = attribute, E = Element, C = Class and M = HTML Comment
+		restrict:'A',
 		link: function(scope, element, attrs) {
-			$(element).mouseover(function() {
-				element.children(".approval_popup").show();
+			
+			$(element).mousedown(function() {
+				attrs.mouse_down = 1;
 			});
-			$(element).mouseout(function() {
-				element.children(".approval_popup").hide();
+			$(element).mouseup(function() {
+				attrs.mouse_down = 0;
 			});
 
-
-			// Add mouse states to all children
-			$(element).children(".approval_popup").mouseover(function() {
-				$(this).show();
-			});
-			$(element).children(".approval_popup").mouseout(function() {
-				$(this).hide();
+			$(element).hover(function(d,i) {
+				if (!attrs.mouse_down) {
+					setTimeout(function() {
+						$(element).find(".delete").fadeIn( "fast", function() {});
+					},100);
+				}
+			},function(d,i) {
+				if (!attrs.mouse_down) {
+					setTimeout(function() {
+						$(element).find(".delete").fadeOut( "fast", function() {});
+					},100);
+				}
 			});
 		}
 	}
-			
 });

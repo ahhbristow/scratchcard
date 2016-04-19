@@ -2,19 +2,21 @@
 
 <div id="content">
 	<div id="header">
-		<h1 id="title">Three Amigo Sessions</h1>
+		<h1 id="title">Example Mapping Sessions</h1>
 	</div>
 	
 	
-	<div class="sessions" ng-if="sessions.length > 0">
+	<div class="sessions">
 		<h2>My Sessions...</h2>
+		<p class="participation_info" ng-if="sessions.length == 0">You haven't created any sessions yet.  Get to it!</p>
 		<div class="session" ng-repeat="session in sessions" >
 			<p><a id="session_{{session._id}}" href="#/sessions/{{session._id}}">{{session.name}}</a></p>
 		</div>
 	</div>
 
-	<div class="sessions" ng-if="participating_sessions.length > 0">
+	<div class="sessions">
 		<h2>Participating in...</h2>
+		<p  ng-if="participating_sessions.length == 0" class="participation_info">Ask your friends to send you a URL so you can participate in their sessions!</p>
 		<div class="session" ng-repeat="participating_session in participating_sessions" >
 			<p><a id="session_{{participating_session._id}}" href="#/sessions/{{participating_session._id}}">{{participating_session.name}}</a></p>
 		</div>

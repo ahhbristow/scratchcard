@@ -9,8 +9,11 @@
 
 
 	<div id="cards">
-		<div class="card" ng-repeat="card in session.cards" draggable x="card.x" y="card.y" ng-style="{top:card.y,left:card.x}" ng-dblclick="deleteCard(card, $event)">
-			<textarea class="{{card.type}}" ng-change="updateText()" ng-blur="saveCard()" ng-model="card.text"></textarea>
+		<div class="card_padding" mouse_down="0" ng-repeat="card in session.cards" draggable x="card.x" y="card.y" ng-style="{top:card.y,left:card.x,'z-index':card.z}" ng-mousedown="selectCard(card,$event)">
+			<button class="delete" ng-click="deleteCard(card,$event)">X</button>
+			<div class="card">
+				<textarea class="{{card.type}}" ng-change="updateText()" ng-blur="saveCard()" ng-model="card.text"></textarea>
+			</div>
 		</div>
 	</div>
 

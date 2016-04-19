@@ -141,11 +141,11 @@ app.use('/', routes);
 /* TODO: Replace with save() call
  * app.sync_session
  *
- * Read from the DB and push out to all clients
+ * Read from the DB and push out to all clients.  If send_to_caller
+ * is 1 then we should send the message to all clients including the
+ * initiator
  */
-app.sync_session = function(session_id) {
-
-	console.log("Synchronising to all clients");
+app.sync_session = function(client, send_to_caller, session_id) {
 
 	// Read the session from the DB
 	CardsSession.getSession(session_id).then(function(session) {
@@ -155,12 +155,17 @@ app.sync_session = function(session_id) {
 		
 		// Push to all clients
 		var connected_users = app.locals.cardssessions[session_id].connected_users;
-		io.to(session_id).emit('sync', {
+		var msg = {
 			"session_id": session_id,
 			"session": session,
 			"connected_users": connected_users
-		});
-		console.log(app.locals.cardssessions[session_id]);
+		}
+
+		if (send_to_caller) {
+			io.to(session_id).emit('sync', msg);
+		} else {
+			client.to(session_id).emit('sync', msg);
+		}
 	});
 }
 /*
@@ -210,20 +215,17 @@ io.on('connection', function(client) {
 		}
 
 		// Sync the entire session so all clients receive the update
-		app.sync_session(session_id);	
+		app.sync_session(client, 1, session_id);	
 	});
 
 
 	// Client will send a move_end message once
 	// dragging has stopped.  We sync at this point
 	client.on('move_end', function(data) {
-		console.log("Client has stopped dragging.  Saving session");
 		var session_id = data.session_id;
 
 		// Write to DB
 		var session = app.locals.cardssessions[session_id].session;
-		console.log("Saving session to DB as:");
-		console.log(session);
 		session.save().then(function() {
 
 			// TODO:  This is inefficient as we already have the latest session
@@ -231,7 +233,10 @@ io.on('connection', function(client) {
 			// it allows us to reload the session participants with their
 			// extra data (if there are new ones)
 			// Read from DB and sync
-			app.sync_session(session_id);
+			//
+			// We don't want the caller to get this message as it causes
+			// Angular to refresh.  TODO: Bit of a hack
+			app.sync_session(client, 0, session_id);
 		});
 	});
 
@@ -265,7 +270,7 @@ io.on('connection', function(client) {
 			client.emit('request_permission_cb', {
 				status: "success"
 			});
-			app.sync_session(session_id);
+			app.sync_session(client, 1, session_id);
 
 		},function() {
 			// Error

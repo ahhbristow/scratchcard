@@ -48,15 +48,18 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	}
 
 	$scope.deleteCard = function(card, event) {
-		// CTRL key must be pressed to do deletion
-		if (event.ctrlKey) {
-			console.log("Deleting: " + card._id);
-			var index = $scope.session.cards.indexOf(card);
-			$scope.session.cards.splice(index, 1);
-			$scope.syncSession();
-			$scope.writeSession();
-		}
+		console.log("Deleting: " + card._id);
+		var index = $scope.session.cards.indexOf(card);
+		$scope.session.cards.splice(index, 1);
+		$scope.syncSession();
+		$scope.writeSession();
 	}
+
+	// Push this card to the front of the list
+	$scope.selectCard = function(card, event) {
+		console.log("Selected card");
+	}
+
 	$scope.addCard = function(card_type, event) {
 		var card = {text: "", x: event.pageX, y: event.pageY-300, type: card_type};
 		this.session.cards.push(card);
