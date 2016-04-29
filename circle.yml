@@ -4,11 +4,6 @@ machine:
     node:
         version: 5.4.0
 
-dependencies:
-    override:
-        - docker info
-        - docker build -t $DOCKER_USER/index_cards .
-
 test:
     pre:
         - webdriver-manager update
@@ -24,6 +19,8 @@ deployment:
     hub:
         branch: master
         commands:
+            - docker info
+            - docker build -t $DOCKER_USER/index_cards .
             - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
             - docker push $DOCKER_USER/index_cards
     staging:
