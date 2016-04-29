@@ -1,4 +1,4 @@
 var config = {
-	mongo_uri: "mongodb://localhost/test_sessions"
+	mongo_uri: process.env.MONGOLAB_URI
 }
 module.exports = config;

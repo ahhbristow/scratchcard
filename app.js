@@ -26,6 +26,11 @@ function redirectToHTTPS(req,res,next) {
 	}
 }
 
+
+// TODO: This mess needs tidying up.  "Production" needs
+// renaming to 'heroku', because Heroku sorts out all the
+// HTTPS stuff and actually strips headers and sends to
+// a HTTP app
 if (app.get('env') === 'production') {
 	var server = require('http').createServer(app);
 	app.use('*',redirectToHTTPS);
@@ -34,7 +39,6 @@ if (app.get('env') === 'production') {
 	var private_key  = fs.readFileSync('certs/server.key');
 	var private_cert = fs.readFileSync('certs/server.crt');
 	var credentials = {key: private_key, cert: private_cert};
-
 	var server = require('https').createServer(credentials,app);
 }
 
