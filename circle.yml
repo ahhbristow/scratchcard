@@ -1,20 +1,34 @@
 machine:
-        node:
-                version: 5.4.0
+    services:
+        - docker
+    node:
+        version: 5.4.0
+
+dependencies:
+    override:
+        - docker info
+        - docker build -t $DOCKER_USER/index_cards .
 
 test:
-        pre:
-                - webdriver-manager update
-                - webdriver-manager --ignore_ssl start:
-                        background: true
-                - npm start:
-                        background: true
-                - sleep 5
-        override:
-                - protractor test/protractor/conf.js
+    pre:
+        - webdriver-manager update
+        - webdriver-manager --ignore_ssl start:
+            background: true
+        - npm start:
+            background: true
+        - sleep 5
+    override:
+        - protractor test/protractor/conf.js
 
 deployment:
-        staging:
-                branch: master
-                heroku:
-                        appname: salty-basin-2309
+    staging:
+        branch: master
+        heroku:
+            appname: salty-basin-2309
+
+
+hub:
+    branch: master
+    commands:
+        - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+        - docker push $DOCKER_USER/index_cards
