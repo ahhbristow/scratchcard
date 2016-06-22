@@ -14,7 +14,7 @@ exports.config = {
 		// Register the browsers for screenshots
 		jasmine.getEnv().addReporter(
 			new HtmlScreenshotReporter({
-				dest: '$CIRCLE_ARTIFACTS',
+				dest: browser.params.screenshot_dir,
 				filename: 'index_cards_test_report.html',
 				browsers: [browser,browser2]
 			})
