@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "nodejs ./bin/www",
     "postinstall": "./node_modules/bower/bin/bower --allow-root install",
-    "test": "node ./bin/www & protractor test/protractor/conf.js"
+    "test": "nodejs ./bin/www & protractor test/protractor/conf.js"
   },
   "dependencies": {
     "body-parser": "~1.12.4",
@@ -32,9 +32,11 @@
   },
   "devDependencies": {
     "jasmine-core": "^2.3.4",
+    "karma": "^0.13.22",
+    "karma-chrome-launcher": "^0.2.3",
+    "karma-jasmine": "^0.3.8",
     "protractor": "^3.0.0",
     "protractor-jasmine2-screenshot-reporter": "^0.2.0",
-    "protractor-screenshot-reporter": "0.0.5",
-    "requirejs": "^2.1.20"
+    "protractor-screenshot-reporter": "0.0.5"
   }
 }

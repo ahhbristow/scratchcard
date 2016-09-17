@@ -74,7 +74,12 @@ app.use(flash());
 
 //=======================
 // Configure Sessions
-var auth_config = require(__dirname + '/config/auth');
+if (app.get('env') === 'development') {
+	var auth_config = require(__dirname + '/config/auth');
+} else {
+	var auth_config = require(__dirname + '/config/test_auth.js');
+}
+
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var SessionStore = new MongoStore({

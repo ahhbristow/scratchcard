@@ -1,7 +1,9 @@
-# index_cards
+# Example Mapping
+
+This is a web-based version of the "[Example Mapping](https://cucumber.io/blog/2015/12/08/example-mapping-introduction)" technique I learned from a talk Matt Wynne (from the Cucumber team) gave at the Agile Testing & BDD eXchange conference in 2014.  Some colleagues and I introduced this to our [company](www.openbet.com) and it made a big difference to how we went about capturing requirements.  Since we use remote teams, we wanted a web-based tool we could use but couldn't find one that fit our needs, so I decided to develop one instead.  I wanted to learn the NodeJS stack anyway, so it was a nice problem to work on!
 
 
-# Deploy manually
+## Install and run locally
 
 To deploy the app, you will need to do the following:
 
@@ -15,23 +17,23 @@ To deploy the app, you will need to do the following:
 - bower install
 
 
-# Run with Docker
+## Deploy as a Docker container
 
-A pre-built Docker image for the cards application is also available, and you can start up containers from that image.
+A pre-built Docker image for the cards application is also available in the public Docker registry, and you can start up containers from that image.
 
 
-# 1.  Start a MongoDB server
+### 1.  Start a MongoDB server
 sudo docker pull mongo:latest
 sudo docker run --name cards_db -d mongo
 
 
-# 2.  Start the NodeJS server in the background (-d option)
-sudo docker pull [DOCKER_REPO_HOST]
-sudo docker run -d -p 4072:4072 --name cards_app --link cards_db:mongo [DOCKER_REPO_HOST]
+### 2.  Start the NodeJS server in the background (-d option)
+sudo docker pull ahhbristow/index_cards:latest
+sudo docker run -d -p 4072:4072 --name cards_app --link cards_db:mongo ahhbristow/index_cards
 
 You should now be able to access the cards app at:
 
-http://localhost:4072/
+http://<docker_host>:4072/
 
 
 # DB Dump
@@ -46,12 +48,3 @@ sudo docker exec -it cards_db /bin/bash
 - The app won't reconnect to the DB if it wasn't available at startup.  You must ensure the DB is running before starting the cards_app container.
 - There is a silly amount of logging to STDOUT and the browser console at the moment.  May cause a bit of a performance issue.
 - THIS IS A BETA VERSION OF THE APP, THERE MAY BE BUGS!
-
-
-
-# TODO
-- Failed login
-- Add scenarios and tests.
-- Reduce bandwidth usage by not sending full JSON on every update.  Save deltas for that card and write on move end (sync then save)
-- Add back button (easy) with nice scroll.  Will need to load all content first then replace
-- Add logout button (toolbar)

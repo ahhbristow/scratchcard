@@ -8,7 +8,7 @@ var LoginPage = function (browser,account) {
 		this.browser.driver.get('https://localhost:4072/');
 	}
 
-	this.login = function() {
+	this.login_full = function() {
 		// Login to the first browser
 		this.browser.driver.findElement(by.id('sign_in_button')).click();
 		var google_login_page = new GoogleLoginPage(this.browser,account);
@@ -33,6 +33,14 @@ var LoginPage = function (browser,account) {
 				});
 			}
 		});
+	}
+
+	this.login = function() {
+		if (account == "primary") {
+			this.browser.driver.get('https://localhost:4072/auth/google/callback?code=1');
+		} else {
+			this.browser.driver.get('https://localhost:4072/auth/google/callback?code=2');
+		}
 	}
 
 
