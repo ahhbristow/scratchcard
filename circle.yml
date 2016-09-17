@@ -9,6 +9,8 @@ test:
         - webdriver-manager update
         - webdriver-manager --ignore_ssl start:
             background: true
+        - node test/google_mock_server/mock_google_server.js:
+            background: true
         - npm start:
             background: true
         - sleep 5
