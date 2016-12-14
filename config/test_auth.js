@@ -3,7 +3,7 @@ module.exports = {
 		'clientID'      : process.env.CLIENT_ID,
 		'clientSecret'  : process.env.CLIENT_SECRET,
 		'callbackURL'   : process.env.GOOGLE_CALLBACK,
-		'authorizationURL': "https://localhost:4072/auth/google/callback?code=1",
+		'authorizationURL': "http://localhost:8080/auth",
 		'userProfileURL'  : "http://localhost:8080/profile",
 		'tokenURL'        : "http://localhost:8080/token"
 	},

@@ -74,10 +74,10 @@ app.use(flash());
 
 //=======================
 // Configure Sessions
-if (app.get('env') === 'development') {
-	var auth_config = require(__dirname + '/config/auth');
-} else {
+if (app.get('env') === 'test') {
 	var auth_config = require(__dirname + '/config/test_auth.js');
+} else {
+	var auth_config = require(__dirname + '/config/auth.js');
 }
 
 var session = require('express-session');
