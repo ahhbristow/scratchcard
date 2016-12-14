@@ -7,15 +7,15 @@ machine:
 test:
     pre:
         - webdriver-manager update
-        - webdriver-manager --ignore_ssl start > ${CIRCLE_ARTIFACTS}/webdriver.log 2>&1:
+        - webdriver-manager --ignore_ssl start:
             background: true
-        - node test/google_mock_server/mock_google_server.js > ${CIRCLE_ARTIFACTS}/mock_google_server.log 2>&1:
+        - node test/google_mock_server/mock_google_server.js:
             background: true
-        - npm start > ${CIRCLE_ARTIFACTS}/server.log 2>&1:
+        - npm start:
             background: true
         - sleep 5
     override:
-        - protractor test/protractor/conf.js --params.screenshot_dir=${CIRCLE_ARTIFACTS} > ${CIRCLE_ARTIFACTS}/protractor.log 2>&1
+        - protractor test/protractor/conf.js --params.screenshot_dir=${CIRCLE_ARTIFACTS}
 
 deployment:
     hub:
