@@ -9,7 +9,7 @@ test:
         - webdriver-manager update
         - webdriver-manager --ignore_ssl start > $CIRCLE_ARTIFACTS/webdriver.log 2>&1:
             background: true
-        - node test/google_mock_server/mock_google_server.js > $CIRCLE_ARTIFACTS/mock_google_server.log 2>&1
+        - node test/google_mock_server/mock_google_server.js > $CIRCLE_ARTIFACTS/mock_google_server.log 2>&1:
             background: true
         - npm start > $CIRCLE_ARTIFACTS/server.log 2>&1:
             background: true
