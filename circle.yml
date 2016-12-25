@@ -11,7 +11,7 @@ test:
             background: true
         - node test/google_mock_server/mock_google_server.js:
             background: true
-        - npm start:
+        - npm start > $CIRCLE_ARTIFACTS/server.log:
             background: true
         - sleep 5
     override:
