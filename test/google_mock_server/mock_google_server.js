@@ -1,5 +1,5 @@
 var http = require('http');
-var dispatcher = require('httpdispatcher');
+var httpdispatcher = require('httpdispatcher');
 
 const PORT=8080
 
@@ -12,6 +12,7 @@ function getToken() {
 	return token;
 }
 
+var dispatcher = new HttpDispatcher();
 dispatcher.setStatic('resources');
 
 
