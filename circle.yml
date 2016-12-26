@@ -15,7 +15,7 @@ test:
             background: true
         - sleep 5
     override:
-        - protractor test/protractor/conf.js --params.screenshot_dir=${CIRCLE_ARTIFACTS}
+        - protractor test/protractor/conf.js
 
 deployment:
     hub:
