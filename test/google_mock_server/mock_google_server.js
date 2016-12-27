@@ -12,7 +12,7 @@ function getToken() {
 	return token;
 }
 
-var dispatcher = new HttpDispatcher();
+var dispatcher = new httpdispatcher();
 dispatcher.setStatic('resources');
 
 
