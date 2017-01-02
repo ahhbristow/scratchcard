@@ -15,21 +15,38 @@ module.exports = function(passport) {
 
 	// Get home page (list of sessions)
 	router.get('/', auth, function(req, res, next) {
+		console.log(req.params);
 		res.render('pages/index');
 	});
 
 	// Perform authentication with Google
-	router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+	router.get('/auth/google/:id', function(req,res) {
+		passport.authenticate('google', {
+			scope: ['profile', 'email'],
+			state: req.params.id
+		})(req,res);
+	});
+	router.get('/auth/google', function(req,res) {
+		passport.authenticate('google', {
+			scope: ['profile', 'email'],
+		})(req,res);
+	});
 
-	router.get('/auth/google/callback',
+	// Callback from Google once authenticated
+	router.get('/google/callback', function(req,res) {
+		console.log(req.query);
+		var session_id = req.query.state;
+		console.log("Redirect to: " + session_id);
 		passport.authenticate('google', {
 			successRedirect : '/',
 			failureRedirect : '/login'
-		}));
+		})(req,res);
+	});
 
 	// Get login page
-	router.get('/login', function(req, res) {
-		res.render('pages/login', {message: req.flash('error')});
+	router.get('/login/', function(req, res) {
+		console.log("Fragment: " + req.params.fragment);
+		res.render('pages/login', {message: req.flash('error'),session_id:''});
 	});
 
 	// Perform logout
