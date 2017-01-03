@@ -14,7 +14,7 @@ var auth = require(__dirname + '/../middleware/auth');
 module.exports = function(passport) {
 
 	// Get home page (list of sessions)
-	router.get('/', auth, function(req, res, next) {
+	router.get('/',function(req, res, next) {
 		console.log(req.params);
 		res.render('pages/index');
 	});
@@ -34,19 +34,31 @@ module.exports = function(passport) {
 
 	// Callback from Google once authenticated
 	router.get('/google/callback', function(req,res) {
-		console.log(req.query);
+		console.log("Query: " + req.query);
 		var session_id = req.query.state;
-		console.log("Redirect to: " + session_id);
+		console.log("Session ID: " + session_id);
+		if (typeof(session_id) != 'undefined') {
+			success_redirect = '/#/sessions/' + session_id;
+			fail_redirect = '/login/' + session_id;
+		} else {
+			success_redirect = '/#/sessions';
+			fail_redirect = '/login/';
+		}
+
 		passport.authenticate('google', {
-			successRedirect : '/',
-			failureRedirect : '/login'
+			successRedirect : success_redirect,
+			failureRedirect : fail_redirect
 		})(req,res);
 	});
 
 	// Get login page
 	router.get('/login/', function(req, res) {
-		console.log("Fragment: " + req.params.fragment);
 		res.render('pages/login', {message: req.flash('error'),session_id:''});
+	});
+	router.get('/login/:id', function(req, res) {
+		console.log("Login via session");
+		var session_id = req.params.id;
+		res.render('pages/login', {message: req.flash('error'),session_id:session_id});
 	});
 
 	// Perform logout
@@ -60,7 +72,7 @@ module.exports = function(passport) {
 	// then return an error.
 	//
 	// Store the session in global mem
-	router.get('/sessions', auth, function(req, res, next) {
+	router.get('/api/sessions', auth, function(req, res, next) {
 
 		// Get all the sessions where the creator is the user we're
 		// logged in as.
@@ -86,7 +98,7 @@ module.exports = function(passport) {
 	});
 
 	// Add new session
-	router.post('/sessions', auth, function(req, res, next) {
+	router.post('/api/sessions', auth, function(req, res, next) {
 		console.log("Adding new card");
 
 		// Generate a random hash to use in the URL as a
@@ -99,7 +111,7 @@ module.exports = function(passport) {
 	});
 
 	// Get a session as JSON
-	router.get('/sessions/:id', auth, function(req, res, next) {
+	router.get('/api/sessions/:id', auth, function(req, res, next) {
 
 		CardsSession.getSession(req.params.id).then(function(session) {
 			console.log("Retrieved session " + req.params.id);
@@ -137,7 +149,7 @@ module.exports = function(passport) {
 
 	// Approve a participant.  Update internal representation
 	// of session and return it
-	router.put('/sessions/:session_id/approveParticipant/:user_id', auth, function(req, res, next) {
+	router.put('/api/sessions/:session_id/approveParticipant/:user_id', auth, function(req, res, next) {
 		var user_id = req.params.user_id;
 		var session_id = req.params.session_id;
 
@@ -151,7 +163,7 @@ module.exports = function(passport) {
 	});
 
 	// Update a session
-	router.put('/sessions/:id', auth, function(req, res, next) {
+	router.put('/api/sessions/:id', auth, function(req, res, next) {
 		CardsSession.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
 			if (err) return next(err);
 			res.json(post);
@@ -159,7 +171,7 @@ module.exports = function(passport) {
 	});
 
 	// Delete a session
-	router.delete('/sessions/:id', auth, function (req, res, next) {
+	router.delete('/api/sessions/:id', auth, function (req, res, next) {
 		CardsSession.findByIdAndRemove(req.params.id, function (err, post) {
 			if (err) return next(err);
 			res.json('{"msg": "success"}');

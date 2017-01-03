@@ -13,11 +13,11 @@ cardsApp.config(['$routeProvider',function($routeProvider) {
     templateUrl: '/static/partials/cards.html',
     controller: 'CardsCtrl'
   })
-  .when('/sessions', {
+  .when('/', {
     templateUrl: '/static/partials/sessions.html',
     controller: 'SessionsCtrl'
   })
   .otherwise({
-    redirectTo: '/sessions'
+    redirectTo: '/'
   });
 }]);
