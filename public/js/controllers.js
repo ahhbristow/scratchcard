@@ -242,6 +242,7 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 
 	// Build a list of all sessions and display them
 	$scope.sessions = [];
+	$scope.loading = 1;
 	
 	$scope.getSessions = function() {
 		$http.get("/api/sessions").success(function (response) {
@@ -249,11 +250,13 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 			if (response.logged_in == 0) {
 				// We need to redirect here
 				window.location.href = "/login";
+				return;
 			}
 
 			$scope.user = response.user;
 			$scope.sessions = response.sessions;
 			$scope.participating_sessions = response.participating_sessions;
+			$scope.loading = 0;
 			console.log("Sessions: " + JSON.stringify(response));
 		});
 	}
