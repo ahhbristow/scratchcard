@@ -14,6 +14,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	$scope.session_id = $routeParams.sessionId;
 	$scope.session = {};
 	$scope.connected_users = {};
+	$scope.loading = 1;
 
 	$scope.requestPermission = function() {
 
@@ -205,6 +206,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 
 			if (response.logged_in == 0) {
 				window.location.href = "/login/" + session_id;
+				return;
 			}
 			console.log("User is logged in");
 
@@ -226,6 +228,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 				$scope.session = response.session;
 				$scope.joinSession();  // Socket connection
 			}
+			$scope.loading = 0;
 	
 		});
 	}
