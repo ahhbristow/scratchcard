@@ -201,9 +201,12 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	$scope.getSession = function(session_id) {
 		$http.get("/api/sessions/" + session_id).success(function (response) {
 
+			console.log("Retrieving session: " + session_id);
+
 			if (response.logged_in == 0) {
 				window.location.href = "/login/" + session_id;
 			}
+			console.log("User is logged in");
 
 			// Get info from response
 			var session = response.session;

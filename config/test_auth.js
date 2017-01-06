@@ -4,7 +4,7 @@ module.exports = {
 		'clientSecret'  : process.env.CLIENT_SECRET,
 		'callbackURL'   : process.env.GOOGLE_CALLBACK,
 		'authorizationURL': "http://localhost:8080/auth",
-		'userProfileURL'  : "http://localhost:8080/profile",
+		'userProfileURL'  : "http://localhost:8080/plus/v1/people/me",
 		'tokenURL'        : "http://localhost:8080/token"
 	},
 	cookie_secret: process.env.COOKIE_SECRET

@@ -1,7 +1,6 @@
 var express = require('express');
 var flash = require('connect-flash');
 var router = express.Router();
-var app = express();
 
 // Load models
 var CardsSession = require(__dirname + '/../models/session.js');
@@ -10,63 +9,13 @@ var User = require(__dirname + '/../models/user.js');
 // Load Middleware
 var auth = require(__dirname + '/../middleware/auth');
 
-
-module.exports = function(passport) {
+module.exports = function() {
 
 	// Get home page (list of sessions)
 	router.get('/',function(req, res, next) {
 		console.log(req.params);
 		res.render('pages/index');
 	});
-
-	// Perform authentication with Google
-	router.get('/auth/google/:id', function(req,res) {
-		passport.authenticate('google', {
-			scope: ['profile', 'email'],
-			state: req.params.id
-		})(req,res);
-	});
-	router.get('/auth/google', function(req,res) {
-		passport.authenticate('google', {
-			scope: ['profile', 'email'],
-		})(req,res);
-	});
-
-	// Callback from Google once authenticated
-	router.get('/google/callback', function(req,res) {
-		console.log("Query: " + req.query);
-		var session_id = req.query.state;
-		console.log("Session ID: " + session_id);
-		if (typeof(session_id) != 'undefined') {
-			success_redirect = '/#/sessions/' + session_id;
-			fail_redirect = '/login/' + session_id;
-		} else {
-			success_redirect = '/#/sessions';
-			fail_redirect = '/login/';
-		}
-
-		passport.authenticate('google', {
-			successRedirect : success_redirect,
-			failureRedirect : fail_redirect
-		})(req,res);
-	});
-
-	// Get login page
-	router.get('/login/', function(req, res) {
-		res.render('pages/login', {message: req.flash('error'),session_id:''});
-	});
-	router.get('/login/:id', function(req, res) {
-		console.log("Login via session");
-		var session_id = req.params.id;
-		res.render('pages/login', {message: req.flash('error'),session_id:session_id});
-	});
-
-	// Perform logout
-	router.get('/logout', function(req, res) {
-		req.logout();
-		res.redirect('/login');
-	});
-
 
 	// Get a session as JSON.  If user doesn't have permission
 	// then return an error.
@@ -123,11 +72,12 @@ module.exports = function(passport) {
 			// If the user doesn't have permission to view this,
 			// return an error
 			if (session.accessibleBy(user)) {
-				console.log("User has permission to view the session");
+				console.log("User " + user.id + " has permission to view the session");
 				resp.has_permission = 1;
 				resp.session = session;
+				console.log(session);
 			} else {
-				console.log("User does not have permission to view the session");
+				console.log("User " + user.id + " does not have permission to view the session");
 				resp.session = {};
 				resp.has_permission = 0;
 				resp.permission_requested = session.hasPending(user);
@@ -136,12 +86,17 @@ module.exports = function(passport) {
 			// If we haven't already, put this session
 			// in global mem to make it available for
 			// updates by all clients
-			if (!req.app.locals.cardssessions[session._id]) {
+			console.log("DEBUG: Checking");
+			console.log(req.app.locals);
+			console.log(req.app.locals.cardssessions[session._id]);
+			if (typeof(req.app.locals.cardssessions[session._id]) == "undefined") {
+				console.log("Storing session in global memory");
 				req.app.locals.cardssessions[session._id] = {};
 				req.app.locals.cardssessions[session._id].connected_users = {};
 			}
+			console.log("DEBUG: Checking");
 			req.app.locals.cardssessions[session._id].session = session;
-			
+			console.log("JSON Response: " + resp);
 			res.json(resp);
 		});
 	});

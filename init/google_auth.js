@@ -22,43 +22,45 @@ module.exports = function(passport, auth_config) {
 		tokenURL        : auth_config.google_auth.tokenURL
 	}
 
-	passport.use(new GoogleStrategy(google_options,function(token, refreshToken, profile, done) {
+	passport.verifyGoogleUser = function(token, refresh_token, profile, done) {
 
 		// make the code asynchronous
 		// User.findOne won't fire until we have all our data back from Google
+		console.log("Returned profile: ");
+		console.log(profile);
 		process.nextTick(function() {
-			// try to find the user based on their google id
 			User.findOne({ 'google.id' : profile.id }, function(err, user) {
-				if (err)
+				if (err) {
 					return done(err);
+				}
 
+				console.log("User: " + user);
 				if (user) {
-					console.log(user);
-					// if a user is found, log them in
+					// Found a user, so log them in
 					return done(null, user);
 				} else {
 					// if the user isnt in our database, create a new user
-					var newUser          = new User();
+					var new_user = new User();
 
 					// set all of the relevant information
-					newUser.google.id    = profile._json.id;
-					newUser.google.token = token;
-					newUser.google.name  = profile._json.displayName;
-					newUser.google.email = profile._json.emails[0].value; // pull the first email
-					newUser.google.picture = profile._json.image.url; // pull the first email
+					new_user.google.id      = profile._json.id;
+					new_user.google.token   = token;
+					new_user.google.name    = profile._json.displayName;
+					new_user.google.email   = profile._json.emails[0].value;
+					new_user.google.picture = profile._json.image.url;
 
 					// save the user
-					newUser.save(function(err) {
+					new_user.save(function(err) {
 						if (err) {
-							console.log(err);
-							throw err;
+							throw(err);
 						}
-						return done(null, newUser);
+						return done(null,new_user);
 					});
 				}
 			});
 		});
+	}
 
-	}));
+	passport.use(new GoogleStrategy(google_options,passport.verifyGoogleUser));
 
 }
