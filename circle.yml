@@ -18,14 +18,12 @@ test:
         - protractor test/protractor/conf.js
 
 deployment:
-    hub:
+    staging:
         branch: master
         commands:
             - docker info
             - docker build -t $DOCKER_USER/index_cards .
             - docker login -u $DOCKER_USER -p $DOCKER_PASS -e $DOCKER_EMAIL
             - docker push $DOCKER_USER/index_cards
-    staging:
-        branch: master
         heroku:
             appname: salty-basin-2309
