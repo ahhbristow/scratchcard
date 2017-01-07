@@ -1,6 +1,9 @@
-<ng-include src="'/static/partials/menu.html'"></ng-include>
+<div id="loading" ng-if="loading == 1">
+	<!-- TODO: Move this into an include -->
+</div>
 
-<div id="content">
+<div id="content" ng-if="loading == 0">
+	<ng-include src="'/static/partials/menu.html'"></ng-include>
 
 	<div id="header">
 		<button id="back_to_sessions" ng-click="goBackToSessions()">sessions/</button>

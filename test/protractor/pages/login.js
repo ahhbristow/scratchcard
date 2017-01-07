@@ -8,7 +8,7 @@ var LoginPage = function (browser,account) {
 		this.browser.driver.get('https://localhost:4072/');
 	}
 
-	this.login_full = function() {
+	/*this.loginFull = function() {
 		// Login to the first browser
 		this.browser.driver.findElement(by.id('sign_in_button')).click();
 		var google_login_page = new GoogleLoginPage(this.browser,account);
@@ -33,7 +33,7 @@ var LoginPage = function (browser,account) {
 				});
 			}
 		});
-	}
+	}*/
 
 	this.login = function() {
 		if (account == "primary") {
@@ -44,7 +44,7 @@ var LoginPage = function (browser,account) {
 	}
 
 
-	this.has_google_sign_in = function() {
+	this.hasGoogleSignIn = function() {
 		if (this.browser.driver.findElement(by.id('sign_in_button'))) {
 			return true;
 		} else {

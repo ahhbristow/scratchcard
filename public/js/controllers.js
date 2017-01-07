@@ -14,6 +14,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	$scope.session_id = $routeParams.sessionId;
 	$scope.session = {};
 	$scope.connected_users = {};
+	$scope.loading = 1;
 
 	$scope.requestPermission = function() {
 
@@ -166,7 +167,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	$scope.approveParticipant = function(user_id) {
 		console.log("Approving user " + user_id);
 
-		var path = '/sessions/' + this.session_id + '/approveParticipant/' + user_id;
+		var path = '/api/sessions/' + this.session_id + '/approveParticipant/' + user_id;
 		$http.put(path).
  			success(function(resp, status, headers, config) {
 				var approved = resp.status;
@@ -198,8 +199,16 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	}
 	
 	// Initial retrieval of session on page load
-	$scope.getCards = function(session_id) {
-		$http.get("/sessions/" + session_id).success(function (response) {
+	$scope.getSession = function(session_id) {
+		$http.get("/api/sessions/" + session_id).success(function (response) {
+
+			console.log("Retrieving session: " + session_id);
+
+			if (response.logged_in == 0) {
+				window.location.href = "/login/" + session_id;
+				return;
+			}
+			console.log("User is logged in");
 
 			// Get info from response
 			var session = response.session;
@@ -219,10 +228,11 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 				$scope.session = response.session;
 				$scope.joinSession();  // Socket connection
 			}
+			$scope.loading = 0;
 	
 		});
 	}
-	$scope.getCards($scope.session_id);
+	$scope.getSession($scope.session_id);
 }]);
 
 
@@ -235,12 +245,21 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 
 	// Build a list of all sessions and display them
 	$scope.sessions = [];
+	$scope.loading = 1;
 	
 	$scope.getSessions = function() {
-		$http.get("/sessions").success(function (response) {
+		$http.get("/api/sessions").success(function (response) {
+
+			if (response.logged_in == 0) {
+				// We need to redirect here
+				window.location.href = "/login";
+				return;
+			}
+
 			$scope.user = response.user;
 			$scope.sessions = response.sessions;
 			$scope.participating_sessions = response.participating_sessions;
+			$scope.loading = 0;
 			console.log("Sessions: " + JSON.stringify(response));
 		});
 	}
@@ -253,7 +272,7 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 			cards: []
 		}
 
-		$http.post('/sessions', session).
+		$http.post('/api/sessions', session).
  		success(function(saved_session, status, headers, config) {
 			console.log("Added session: " + JSON.stringify(saved_session));
 			$scope.sessions.push(saved_session);

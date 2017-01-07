@@ -47,9 +47,6 @@ describe('Requesting permission to participate in a session',function() {
 		});
 	});
 
-	//it('should ',function() {});
-	//
-
 	// TODO: An add_session_and_get_link() function would be useful
 	it('should allow a user to request participation',function() {
 		// Create session with user A

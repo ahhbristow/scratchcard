@@ -1,7 +1,6 @@
 var express = require('express');
 var flash = require('connect-flash');
 var router = express.Router();
-var app = express();
 
 // Load models
 var CardsSession = require(__dirname + '/../models/session.js');
@@ -10,40 +9,19 @@ var User = require(__dirname + '/../models/user.js');
 // Load Middleware
 var auth = require(__dirname + '/../middleware/auth');
 
-
-module.exports = function(passport) {
+module.exports = function() {
 
 	// Get home page (list of sessions)
-	router.get('/', auth, function(req, res, next) {
+	router.get('/',function(req, res, next) {
+		console.log(req.params);
 		res.render('pages/index');
 	});
-
-	// Perform authentication with Google
-	router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
-
-	router.get('/auth/google/callback',
-		passport.authenticate('google', {
-			successRedirect : '/',
-			failureRedirect : '/login'
-		}));
-
-	// Get login page
-	router.get('/login', function(req, res) {
-		res.render('pages/login', {message: req.flash('error')});
-	});
-
-	// Perform logout
-	router.get('/logout', function(req, res) {
-		req.logout();
-		res.redirect('/login');
-	});
-
 
 	// Get a session as JSON.  If user doesn't have permission
 	// then return an error.
 	//
 	// Store the session in global mem
-	router.get('/sessions', auth, function(req, res, next) {
+	router.get('/api/sessions', auth, function(req, res, next) {
 
 		// Get all the sessions where the creator is the user we're
 		// logged in as.
@@ -69,7 +47,7 @@ module.exports = function(passport) {
 	});
 
 	// Add new session
-	router.post('/sessions', auth, function(req, res, next) {
+	router.post('/api/sessions', auth, function(req, res, next) {
 		console.log("Adding new card");
 
 		// Generate a random hash to use in the URL as a
@@ -82,7 +60,7 @@ module.exports = function(passport) {
 	});
 
 	// Get a session as JSON
-	router.get('/sessions/:id', auth, function(req, res, next) {
+	router.get('/api/sessions/:id', auth, function(req, res, next) {
 
 		CardsSession.getSession(req.params.id).then(function(session) {
 			console.log("Retrieved session " + req.params.id);
@@ -94,11 +72,12 @@ module.exports = function(passport) {
 			// If the user doesn't have permission to view this,
 			// return an error
 			if (session.accessibleBy(user)) {
-				console.log("User has permission to view the session");
+				console.log("User " + user.id + " has permission to view the session");
 				resp.has_permission = 1;
 				resp.session = session;
+				console.log(session);
 			} else {
-				console.log("User does not have permission to view the session");
+				console.log("User " + user.id + " does not have permission to view the session");
 				resp.session = {};
 				resp.has_permission = 0;
 				resp.permission_requested = session.hasPending(user);
@@ -107,12 +86,17 @@ module.exports = function(passport) {
 			// If we haven't already, put this session
 			// in global mem to make it available for
 			// updates by all clients
-			if (!req.app.locals.cardssessions[session._id]) {
+			console.log("DEBUG: Checking");
+			console.log(req.app.locals);
+			console.log(req.app.locals.cardssessions[session._id]);
+			if (typeof(req.app.locals.cardssessions[session._id]) == "undefined") {
+				console.log("Storing session in global memory");
 				req.app.locals.cardssessions[session._id] = {};
 				req.app.locals.cardssessions[session._id].connected_users = {};
 			}
+			console.log("DEBUG: Checking");
 			req.app.locals.cardssessions[session._id].session = session;
-			
+			console.log("JSON Response: " + resp);
 			res.json(resp);
 		});
 	});
@@ -120,7 +104,7 @@ module.exports = function(passport) {
 
 	// Approve a participant.  Update internal representation
 	// of session and return it
-	router.put('/sessions/:session_id/approveParticipant/:user_id', auth, function(req, res, next) {
+	router.put('/api/sessions/:session_id/approveParticipant/:user_id', auth, function(req, res, next) {
 		var user_id = req.params.user_id;
 		var session_id = req.params.session_id;
 
@@ -134,7 +118,7 @@ module.exports = function(passport) {
 	});
 
 	// Update a session
-	router.put('/sessions/:id', auth, function(req, res, next) {
+	router.put('/api/sessions/:id', auth, function(req, res, next) {
 		CardsSession.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
 			if (err) return next(err);
 			res.json(post);
@@ -142,7 +126,7 @@ module.exports = function(passport) {
 	});
 
 	// Delete a session
-	router.delete('/sessions/:id', auth, function (req, res, next) {
+	router.delete('/api/sessions/:id', auth, function (req, res, next) {
 		CardsSession.findByIdAndRemove(req.params.id, function (err, post) {
 			if (err) return next(err);
 			res.json('{"msg": "success"}');
