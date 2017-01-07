@@ -16,14 +16,14 @@ test:
         - sleep 5
     override:
         - protractor test/protractor/conf.js
-
+    post:
+        - docker info
+        - docker build -t $DOCKER_USER/index_cards .
+        - docker login -u $DOCKER_USER -p $DOCKER_PASS -e $DOCKER_EMAIL
+        - docker push $DOCKER_USER/index_cards
+        
 deployment:
     staging:
         branch: master
-        commands:
-            - docker info
-            - docker build -t $DOCKER_USER/index_cards .
-            - docker login -u $DOCKER_USER -p $DOCKER_PASS -e $DOCKER_EMAIL
-            - docker push $DOCKER_USER/index_cards
         heroku:
             appname: salty-basin-2309
