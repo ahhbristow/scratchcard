@@ -31,9 +31,14 @@ dispatcher.onGet('/plus/v1/people/me',function(req,res) {
 });
 dispatcher.onGet('/auth',function(req,res) {
 	var redirect_url = req.params.redirect_uri;
+	
+	// TODO: Validate state
 	var state = req.params.state;
 	console.log(state);
-	// TODO: Validate state
+	if (typeof(state) == 'undefined') {
+		state = '';
+	}
+
 	res.writeHead(302, {
 		'Location': redirect_url + '?code=1&state=' + state
 	});

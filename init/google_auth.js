@@ -26,15 +26,12 @@ module.exports = function(passport, auth_config) {
 
 		// make the code asynchronous
 		// User.findOne won't fire until we have all our data back from Google
-		console.log("Returned profile: ");
-		console.log(profile);
 		process.nextTick(function() {
 			User.findOne({ 'google.id' : profile.id }, function(err, user) {
 				if (err) {
 					return done(err);
 				}
 
-				console.log("User: " + user);
 				if (user) {
 					// Found a user, so log them in
 					return done(null, user);

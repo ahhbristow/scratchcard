@@ -245,6 +245,7 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 
 	// Build a list of all sessions and display them
 	$scope.sessions = [];
+	$scope.new_session = {name: ''}
 	$scope.loading = 1;
 	
 	$scope.getSessions = function() {

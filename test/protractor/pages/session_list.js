@@ -20,6 +20,7 @@ var SessionListPage = function(browser) {
 	};
 
 	this.get_session_link = function(session_name) {
+		console.log("Getting link for " + session_name);
 		return this.browser.element(by.linkText(session_name));
 	}
 };

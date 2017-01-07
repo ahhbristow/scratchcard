@@ -2,9 +2,11 @@ var SessionPage = function(url,browser) {
 	
 	this.url = url;
 	this.browser = browser;
-
+	
+	var page = this;
 	this.get = function() {
-		this.browser.get(url);
+		console.log("Retrieving session from: " + url);
+		page.browser.get(url);
 	}
 
 	this.has_page_loaded = function() {

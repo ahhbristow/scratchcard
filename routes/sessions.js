@@ -13,7 +13,6 @@ module.exports = function() {
 
 	// Get home page (list of sessions)
 	router.get('/',function(req, res, next) {
-		console.log(req.params);
 		res.render('pages/index');
 	});
 
@@ -41,7 +40,6 @@ module.exports = function() {
 			.exec(function (err, data) {
 				resp.participating_sessions = data;
 				res.json(resp);
-				console.log(resp);
 			});
 		});
 	});
@@ -75,7 +73,6 @@ module.exports = function() {
 				console.log("User " + user.id + " has permission to view the session");
 				resp.has_permission = 1;
 				resp.session = session;
-				console.log(session);
 			} else {
 				console.log("User " + user.id + " does not have permission to view the session");
 				resp.session = {};
@@ -86,17 +83,12 @@ module.exports = function() {
 			// If we haven't already, put this session
 			// in global mem to make it available for
 			// updates by all clients
-			console.log("DEBUG: Checking");
-			console.log(req.app.locals);
-			console.log(req.app.locals.cardssessions[session._id]);
 			if (typeof(req.app.locals.cardssessions[session._id]) == "undefined") {
 				console.log("Storing session in global memory");
 				req.app.locals.cardssessions[session._id] = {};
 				req.app.locals.cardssessions[session._id].connected_users = {};
 			}
-			console.log("DEBUG: Checking");
 			req.app.locals.cardssessions[session._id].session = session;
-			console.log("JSON Response: " + resp);
 			res.json(resp);
 		});
 	});
