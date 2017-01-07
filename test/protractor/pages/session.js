@@ -5,8 +5,7 @@ var SessionPage = function(url,browser) {
 	
 	var page = this;
 	this.get = function() {
-		console.log("Retrieving session from: " + url);
-		page.browser.get(url);
+		this.browser.get(url);
 	}
 
 	this.has_page_loaded = function() {
