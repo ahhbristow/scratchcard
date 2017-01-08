@@ -9,7 +9,7 @@ var CardSchema = new Schema({
 });
 
 var ParticipantSchema = new Schema({
-	user_id: {type:Schema.Types.ObjectId,ref: 'User'},
+	user_id: {type:mongoose.Schema.Types.ObjectId,ref: 'User'},
     status: {type:String, default: 'P'}
 });
 
@@ -17,7 +17,7 @@ var ParticipantSchema = new Schema({
 var CardsSessionSchema = new Schema({
     id: Number,
     name: String,
-    creator: {type: Schema.Types.ObjectId, ref: 'User'},
+    creator: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     participants: [ParticipantSchema],
     cards: [CardSchema]
 });

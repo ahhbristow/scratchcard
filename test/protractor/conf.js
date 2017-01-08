@@ -19,6 +19,14 @@ exports.config = {
 				browsers: [browser,browser2]
 			})
 		);
+	
+		// abstract writing screen shot to a file
+		var fs = require('fs');
+		function writeScreenShot(data, filename) {
+			var stream = fs.createWriteStream(filename);
+			stream.write(new Buffer(data, 'base64'));
+			stream.end();
+		}
 
 	},
 

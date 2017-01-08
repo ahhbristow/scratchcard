@@ -81,7 +81,7 @@ if (app.get('env') === 'test') {
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var sessionStore = new MongoStore({
-	url: mongo_uri
+	mongooseConnection: mongoose.connection
 });
 app.use(cookieParser());
 app.use(session({
