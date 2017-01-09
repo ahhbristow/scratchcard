@@ -1,6 +1,14 @@
 var LoginPage = require('./pages/login');
 var SessionListPage = require('./pages/session_list');
 var SessionPage = require('./pages/session');
+		
+// abstract writing screen shot to a file
+var fs = require('fs');
+function writeScreenShot(data, filename) {
+	var stream = fs.createWriteStream(filename);
+	stream.write(new Buffer(data, 'base64'));
+	stream.end();
+}
 
 describe('Requesting permission to participate in a session',function() {
 
