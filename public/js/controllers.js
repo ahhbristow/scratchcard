@@ -49,11 +49,14 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	}
 
 	$scope.deleteCard = function(card, event) {
-		console.log("Deleting: " + card._id);
+		console.log("Deleting card");
 		var index = $scope.session.cards.indexOf(card);
 		$scope.session.cards.splice(index, 1);
-		$scope.syncSession();
-		$scope.writeSession();
+		socket.emit('delete_card', {
+			session_id: $scope.session_id,
+			card: card
+		}, function (result) {
+		});
 	}
 
 	// Push this card to the front of the list
@@ -64,8 +67,11 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	$scope.addCard = function(card_type, event) {
 		var card = {text: "", x: event.pageX, y: event.pageY-300, type: card_type};
 		this.session.cards.push(card);
-		$scope.syncSession();
-		$scope.writeSession();
+		socket.emit('add_card', {
+			session_id: $scope.session_id,
+			card: card
+		}, function (result) {
+		});
 	}
 
 
@@ -86,14 +92,14 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	);
 
 	}
-	$scope.dragMove = function() {
-		$scope.syncSession();
+	$scope.dragMove = function(card) {
+		$scope.moveCard(card);
 	}
-	$scope.saveCard = function() {
-		$scope.writeSession();
-	}
-	$scope.updateText = function() {
-		$scope.syncSession();
+	$scope.updateText = function(card) {
+		// TODO: Rename moveCard
+		console.log("Updating");
+		console.log(card);
+		$scope.moveCard(card);
 	}
 	$scope.dragEnd = function() {
 		$scope.writeSession();
@@ -103,7 +109,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	// Too much data
 	// Sends the entire cards JSON back to the server to be updated
 	// in server memory
-	$scope.syncSession=function() {
+	$scope.syncSession = function() {
 		var session_details = $scope.session;
 		socket.emit('move', {
 			session_id:       $scope.session_id,
@@ -116,13 +122,25 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		});
 	}
 
+	// Send a move_card event to the socket
+	$scope.moveCard = function(card) {
+		socket.emit('move_card', {
+			session_id: $scope.session_id,
+			card: card
+		}, function(result) {
+
+		});
+
+	}
+
 	// Handle socket events
-	socket.on('move', function(msg){
-		$scope.handleMoveMsg(msg)
+	socket.on('card_moved', function(card) {
+		$scope.cardMoved(card);
 	});
 
 	// Handle full session sync
 	socket.on('sync', function(msg) {
+		console.log("Received full session sync message");
 		var session_id      = msg.session_id;
 		var session_details = msg.session;
 		var connected_users = msg.connected_users;
@@ -143,18 +161,14 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		$scope.handlePermissionCB(msg);
 	});
 		
-	$scope.handleMoveMsg = function(msg) {
-	
-		var card_id = msg._id;
-		var x = msg.x;
-		var y = msg.y;
-
-		var card = this.session.findCard(card_id);
-		card.x = x;
-		card.y = y;
+	$scope.cardMoved = function(msg) {
+		var card = this.findCard(msg.card._id);
+		card.x = msg.card.x;
+		card.y = msg.card.y;
+		card.text = msg.card.text
 	}
 	
-	$scope.session.findCard = function(id) {
+	$scope.findCard = function(id) {
 		for (var i = 0; i < $scope.session.cards.length; i++) {
 			var card = $scope.session.cards[i];
 			if (card._id == id) {

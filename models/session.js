@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var CardSchema = new Schema({
-    text: String,
+	text: String,
     x: Number,
     y: Number,
     type: String
@@ -15,7 +15,7 @@ var ParticipantSchema = new Schema({
 
 
 var CardsSessionSchema = new Schema({
-    id: Number,
+	id: Number,
     name: String,
     creator: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     participants: [ParticipantSchema],
@@ -114,17 +114,35 @@ CardsSessionSchema.methods.hasPending = function(user) {
 	}
 }
 
+CardsSessionSchema.methods.findCard = function(id) {
+	for (var i = 0; i < this.cards.length; i++) {             
+		var card = this.cards[i];
+		if (card._id == id) {                                       
+			return card;
+		}               
+	}                                                                   
+}
+CardsSessionSchema.methods.getIndexOf = function(id) {
+	for (var i = 0; i < this.cards.length; i++) {             
+		var card = this.cards[i];
+		if (card._id == id) {                                       
+			return i;
+		}
+	}
+	return -1;
+}
+
 
 // =============================================
 // Static methods
 
 CardsSessionSchema.statics.getSession = function(session_id) {
 	return CardsSession.findById(session_id)
-	.populate('participants.user_id creator')
-	.exec(function (err, session) {
-		if (err) return next(err);
-		return session;
-	});
+		.populate('participants.user_id creator')
+		.exec(function (err, session) {
+			if (err) return next(err);
+			return session;
+		});
 }
 
 

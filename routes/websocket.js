@@ -104,6 +104,7 @@ var socket_io = function(app, io) {
 		// Client will send a move_end message once
 		// dragging has stopped.  We sync at this point
 		client.on('move_end', function(data) {
+			console.log("Received move_end. Saving session to DB")
 			var session_id = data.session_id;
 
 			// Write to DB
@@ -118,22 +119,68 @@ var socket_io = function(app, io) {
 				//
 				// We don't want the caller to get this message as it causes
 				// Angular to refresh.  TODO: Bit of a hack
+				console.log("Saved to DB");
 				socket_io.sync_session(client, 0, session_id);
 			});
 		});
 
-		// Update the session with the new cards positions
-		client.on('move', function(data) {
-			var session_id = data.session_id;
-			app.locals.cardssessions[session_id].session.cards = data.session_details.cards;
+		client.on('delete_card', function(data) {
 
-			// TODO: This is probably overkill for each
-			// drag move.  We should just push out the card
-			// deltas
-			socket_io.soft_sync_session(client, session_id);
+			console.log("Deleting card");
+			// TODO: I think there's a security hole here,
+			// as we don't check that the user is allowed to
+			// actually update this session
+			var session_id = data.session_id;
+			
+			// Delete the card from in-memory session object
+			var session = app.locals.cardssessions[session_id].session;
+			var index = session.getIndexOf(data.card._id);
+
+			if (index != -1) {
+				session.cards.splice(index, 1);
+			}
+
+			// Save entire session and synchronise everyone
+			session.save().then(function() {
+				socket_io.sync_session(client, 1, session_id);
+			});
 		});
 
+		client.on('add_card', function(data) {
 
+			// TODO: I think there's a security hole here,
+			// as we don't check that the user is allowed to
+			// actually update this session
+			var session_id = data.session_id;
+			
+			// Update the in-memory session
+			var session = app.locals.cardssessions[session_id].session;
+			session.cards.push(data.card);
+		
+			// Save entire session and synchronise everyone
+			session.save().then(function() {
+				socket_io.sync_session(client, 1, session_id);
+			});
+		});
+
+		client.on('move_card', function(data) {
+			var session_id = data.session_id;
+			
+			// Update the in-memory session
+			var session = app.locals.cardssessions[session_id].session;
+			console.log(session);
+			var card_id = data.card._id;
+			console.log("Searching for card: " + card_id);
+			var card = session.findCard(card_id);
+			
+			card.x = data.card.x;
+			card.y = data.card.y;
+			card.text = data.card.text;
+
+			client.to(session_id).emit('card_moved', {
+				card: data.card	
+			});
+		});
 
 		// Handle a request to join a session
 		// TODO: Convert to HTTP?
