@@ -11,11 +11,11 @@ To deploy the app, you will need to do the following:
 - Install MongoDB using standard package manager
 - Install NodeJS using standard package manager (this will install NPM)
 
-
-- git clone https://github.com/ahhbristow/index_cards
-- npm install
-- bower install
-
+~~~
+git clone https://github.com/ahhbristow/index_cards
+npm install
+bower install
+~~~
 
 ## Deploy as a Docker container
 
@@ -23,24 +23,32 @@ A pre-built Docker image for the cards application is also available in the publ
 
 
 ### 1.  Start a MongoDB server
+
+~~~
 sudo docker pull mongo:latest
 sudo docker run --name cards_db -d mongo
-
+~~~
 
 ### 2.  Start the NodeJS server in the background (-d option)
+
+~~~
 sudo docker pull ahhbristow/index_cards:latest
 sudo docker run -d -p 4072:4072 --name cards_app --link cards_db:mongo ahhbristow/index_cards
+~~~
 
 You should now be able to access the cards app at:
 
+~~~
 http://<docker_host>:4072/
-
+~~~
 
 # DB Dump
+
 To dump the DB, you will need to run the following to get into the container, and do a Mongo export from the default data store:
 
+~~~
 sudo docker exec -it cards_db /bin/bash
-
+~~~
 
 # Known Issues
  
