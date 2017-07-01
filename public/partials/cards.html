@@ -1,88 +1,88 @@
 <div id="loading" ng-if="loading == 1">
-	<!-- TODO: Move this into an include -->
+    <!-- TODO: Move this into an include -->
 </div>
 
 <div id="content" ng-if="loading == 0">
-	<ng-include src="'/static/partials/menu.html'"></ng-include>
+    <ng-include src="'/static/partials/menu.html'"></ng-include>
 
-	<div id="header">
-		<button id="back_to_sessions" ng-click="goBackToSessions()">sessions/</button>
-		<h1 id="session_name">{{session.name}}</h1>
-	</div>
-
-
-	<div id="cards">
-		<div class="card_padding" mouse_down="0" ng-repeat="card in session.cards" draggable x="card.x" y="card.y" ng-style="{top:card.y,left:card.x,'z-index':card.z}" ng-mousedown="selectCard(card,$event)">
-			<button class="delete" ng-click="deleteCard(card,$event)">X</button>
-			<div class="card">
-				<textarea class="{{card.type}}" ng-change="updateText(card)" ng-blur="saveCard()" ng-model="card.text"></textarea>
-			</div>
-		</div>
-	</div>
-
-	<div ng-if="user_has_permission !== 1" id="permission_control">
-
-		<div id="awaiting_approval_msg" ng-if="permission_requested === 1">
-			<p>Awaiting approval from session owner</p>
-		</div>
-
-		<div ng-if="permission_requested !== 1"> 
-			<p>You do not have permission to view this session</p>
-			<button id="request_permission" ng-click="requestPermission()">Request Permission</button>
-	</div>
-
-</div>
+    <div id="header">
+        <button id="back_to_sessions" ng-click="goBackToSessions()">sessions/</button>
+        <h1 id="session_name">{{session.name}}</h1>
+    </div>
 
 
-<div ng-if="user_has_permission === 1" id="control_bar">
-	<button id="question" class="btn question" ng-click="addCard('question', $event)">Question</button>
-	<button class="btn story" ng-click="addCard('story', $event)">Story</button>
-	<button class="btn rule" ng-click="addCard('rule', $event)">Rule</button>
-	<button class="btn example" ng-click="addCard('example', $event)">Example</button>
+    <div id="cards">
+        <div class="card_padding" mouse_down="0" ng-repeat="card in session.cards" draggable x="card.x" y="card.y" ng-style="{top:card.y,left:card.x,'z-index':card.z}" ng-mousedown="selectCard(card)" ng-blur="deselectCard(card)">
+            <button class="delete" ng-click="deleteCard(card,$event)">X</button>
+            <div class="card {{selected_card === card._id ? 'selected' : ''}}">
+            <textarea class="{{card.type}}" text-focus card="card" ng-change="updateText(card)" ng-blur="deselectCard(card)" ng-focus="" ng-model="card.text"></textarea>
+            </div>
+        </div>
+    </div>
 
-	<div id="participants">
+    <div ng-if="user_has_permission !== 1" id="permission_control">
 
-		<ul id="creator" style="display: inline;">
-			<li class="participant">
-				<div class="connected" ng-if="connected_users[session.creator._id].connected == 1">
-					<span>{{ session.creator.google.name }}</span>
-					<img src="{{session.creator.google.picture}}" />
-				</div>
-				
-				<div class="disconnected" ng-if="connected_users[session.creator._id].connected != 1">
-					<span>{{ session.creator.google.name }}</span>
-					<img src="{{session.creator.google.picture}}" />
-				</div>
-			</li>
-		</ul>
+        <div id="awaiting_approval_msg" ng-if="permission_requested === 1">
+            <p>Awaiting approval from session owner</p>
+        </div>
 
-		<ul id="active_participants" style="display: inline;">
-			<li class="participant" ng-repeat="participant in session.participants | filter: {status: 'A'}">
+        <div ng-if="permission_requested !== 1"> 
+            <p>You do not have permission to view this session</p>
+            <button id="request_permission" ng-click="requestPermission()">Request Permission</button>
+        </div>
 
-				<div class="connected" ng-if="connected_users[participant.user_id._id].connected == 1">
-					<span>{{ participant.user_id.google.name }}</span>
-					<img src="{{participant.user_id.google.picture}}" />
-				</div>
-				
-				<div class="disconnected" ng-if="connected_users[participant.user_id._id].connected != 1">
-					<span>{{ participant.user_id.google.name }}</span>
-					<img src="{{participant.user_id.google.picture}}" />
-				</div>
-			</li>
+    </div>
 
-		</ul>
-		<ul id="pending_participants" style="display: inline;">
-			<li data-id="{{participant.user_id._id}}" class="participant" ng-repeat="participant in session.participants | filter: {status: 'P'}">
-				<div class="approval_popup">
-					<button class="approve" ng-click="approveParticipant(participant.user_id._id)">Approve</button>
-					<button class="reject">Reject</button>
-				</div>
-				<span>{{ participant.user_id.google.name }}</span>
-				<img src="{{participant.user_id.google.picture}}" />
 
-			</li>
-		</ul>
-	</div>
-</div>
+    <div ng-if="user_has_permission === 1" id="control_bar">
+        <button id="question" class="btn question" ng-click="addCard('question', $event)">Question</button>
+        <button class="btn story" ng-click="addCard('story', $event)">Story</button>
+        <button class="btn rule" ng-click="addCard('rule', $event)">Rule</button>
+        <button class="btn example" ng-click="addCard('example', $event)">Example</button>
+
+        <div id="participants">
+
+            <ul id="creator" style="display: inline;">
+                <li class="participant">
+                    <div class="connected" ng-if="connected_users[session.creator._id].connected == 1">
+                        <span>{{ session.creator.google.name }}</span>
+                        <img src="{{session.creator.google.picture}}" />
+                    </div>
+
+                    <div class="disconnected" ng-if="connected_users[session.creator._id].connected != 1">
+                        <span>{{ session.creator.google.name }}</span>
+                        <img src="{{session.creator.google.picture}}" />
+                    </div>
+                </li>
+            </ul>
+
+            <ul id="active_participants" style="display: inline;">
+                <li class="participant" ng-repeat="participant in session.participants | filter: {status: 'A'}">
+
+                    <div class="connected" ng-if="connected_users[participant.user_id._id].connected == 1">
+                        <span>{{ participant.user_id.google.name }}</span>
+                        <img src="{{participant.user_id.google.picture}}" />
+                    </div>
+
+                    <div class="disconnected" ng-if="connected_users[participant.user_id._id].connected != 1">
+                        <span>{{ participant.user_id.google.name }}</span>
+                        <img src="{{participant.user_id.google.picture}}" />
+                    </div>
+                </li>
+
+            </ul>
+            <ul id="pending_participants" style="display: inline;">
+                <li data-id="{{participant.user_id._id}}" class="participant" ng-repeat="participant in session.participants | filter: {status: 'P'}">
+                    <div class="approval_popup">
+                        <button class="approve" ng-click="approveParticipant(participant.user_id._id)">Approve</button>
+                        <button class="reject">Reject</button>
+                    </div>
+                    <span>{{ participant.user_id.google.name }}</span>
+                    <img src="{{participant.user_id.google.picture}}" />
+
+                </li>
+            </ul>
+        </div>
+    </div>
 
 </div>

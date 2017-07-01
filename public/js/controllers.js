@@ -15,6 +15,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	$scope.session = {};
 	$scope.connected_users = {};
 	$scope.loading = 1;
+	$scope.selected_card = {};
 
 	$scope.requestPermission = function() {
 
@@ -60,8 +61,12 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	}
 
 	// Push this card to the front of the list
-	$scope.selectCard = function(card, event) {
-		console.log("Selected card");
+	$scope.selectCard = function(card) {
+		$scope.selected_card = card._id;
+	}
+
+	$scope.deselectCard = function(card) {
+		$scope.selected_card = {};
 	}
 
 	$scope.addCard = function(card_type, event) {
@@ -96,9 +101,6 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		$scope.moveCard(card);
 	}
 	$scope.updateText = function(card) {
-		// TODO: Rename moveCard
-		console.log("Updating");
-		console.log(card);
 		$scope.moveCard(card);
 	}
 	$scope.dragEnd = function() {
