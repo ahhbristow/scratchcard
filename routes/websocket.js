@@ -168,9 +168,7 @@ var socket_io = function(app, io) {
 			
 			// Update the in-memory session
 			var session = app.locals.cardssessions[session_id].session;
-			console.log(session);
 			var card_id = data.card._id;
-			console.log("Searching for card: " + card_id);
 			var card = session.findCard(card_id);
 			
 			card.x = data.card.x;

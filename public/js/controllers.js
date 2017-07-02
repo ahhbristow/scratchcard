@@ -68,35 +68,6 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	$scope.deselectCard = function(card) {
 		$scope.selected_card = {};
 	}
-
-	$scope.addCard = function(card_type, event) {
-		var card = {text: "", x: event.pageX, y: event.pageY-300, type: card_type};
-		this.session.cards.push(card);
-		socket.emit('add_card', {
-			session_id: $scope.session_id,
-			card: card
-		}, function (result) {
-		});
-	}
-
-
-	// Handlers for moving cards
-	//
-	
-	// Tells the server to write what it has to the DB
-	$scope.writeSession = function() {
-		console.log("Sending move_end")
-		socket.emit('move_end', {
-		   session_id: $scope.session_id
-		}, function (result) {
-			if (!result) {
-		      		console.log("ERROR");
-			}
-			console.log(result);
-		}
-	);
-
-	}
 	$scope.dragMove = function(card) {
 		$scope.moveCard(card);
 	}
@@ -107,20 +78,14 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		$scope.writeSession();
 	}
 
-	// TODO: Send only the card, don't serialise the session.
-	// Too much data
-	// Sends the entire cards JSON back to the server to be updated
-	// in server memory
-	$scope.syncSession = function() {
-		var session_details = $scope.session;
-		socket.emit('move', {
-			session_id:       $scope.session_id,
-			session_details:  session_details
+	// Adds a new card to the session
+	$scope.addCard = function(card_type, event) {
+		var card = {text: "", x: event.pageX, y: event.pageY-300, type: card_type};
+		this.session.cards.push(card);
+		socket.emit('add_card', {
+			session_id: $scope.session_id,
+			card: card
 		}, function (result) {
-			if (!result) {
-				console.log("Error emitting 'move'");
-			}
-			console.log(result);
 		});
 	}
 
@@ -132,7 +97,19 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		}, function(result) {
 
 		});
+	}
 
+	// Tells the server to write what it has to the DB
+	$scope.writeSession = function() {
+		console.log("Sending move_end")
+		socket.emit('move_end', {
+		   session_id: $scope.session_id
+		}, function (result) {
+			if (!result) {
+		      		console.log("ERROR");
+			}
+			console.log(result);
+		});
 	}
 
 	// Handle socket events
