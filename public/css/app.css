@@ -93,6 +93,13 @@ p.participation_info {
 	margin-top: 20px;
 }
 
+#logo {
+	padding-top: 100px;
+	display: block;
+	margin: 0px auto;
+	width: 800px;
+}
+
 
 #sign_in_button {
 	margin: 50px auto;
