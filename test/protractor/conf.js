@@ -12,7 +12,7 @@ function writeScreenShot(data, filename) {
 
 exports.config = {
 	specs: ['google_login.js','sessions.js','request_participation.js'],
-	seleniumAddress: 'http://localhost:4444/wd/hub',
+	seleniumAddress: 'http://localhost:9515',
 	onPrepare: function() {
 
 
