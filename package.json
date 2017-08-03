@@ -5,7 +5,9 @@
   "scripts": {
     "start": "node ./bin/www",
     "postinstall": "./node_modules/bower/bin/bower --allow-root install",
-    "test": "./test/test_runner.sh"
+    "start-chromedriver": "./node_modules/chromedriver/bin/chromedriver",
+    "start-mock-google-oauth": "node ./test/google_mock_server/mock_google_server.js",
+    "test": "./node_modules/protractor/bin/protractor test/protractor/conf.js"
   },
   "dependencies": {
     "body-parser": "~1.12.4",
@@ -36,6 +38,9 @@
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^0.2.3",
     "karma-jasmine": "^0.3.8",
+    "chromedriver": "^2.31.0",
+    "npm-run-all": "^4.0.2",
+    "protractor": "^3.3.0",
     "protractor": "^3.0.0",
     "protractor-jasmine2-screenshot-reporter": "^0.2.0",
     "protractor-screenshot-reporter": "0.0.5"
