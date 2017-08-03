@@ -33,14 +33,14 @@
     "ws": "0.4.x"
   },
   "devDependencies": {
-    "httpdispatcher": "^2.0.1",
+    "chrome": "^0.1.0",
+    "chromedriver": "2.27.0",
+    "httpdispatcher": "^2.1.0",
     "jasmine-core": "^2.3.4",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^0.2.3",
     "karma-jasmine": "^0.3.8",
-    "chromedriver": "^2.31.0",
     "npm-run-all": "^4.0.2",
-    "protractor": "^3.3.0",
     "protractor": "^3.0.0",
     "protractor-jasmine2-screenshot-reporter": "^0.2.0",
     "protractor-screenshot-reporter": "0.0.5"
