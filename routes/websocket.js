@@ -8,6 +8,8 @@ var cardsSession = require('./../models/session.js');
  *
  */
 
+
+
 var socket_io = function(app, io) {
 
 	// Socket IO object needs to know
@@ -71,10 +73,14 @@ var socket_io = function(app, io) {
 	var socket_io = this;
 	io.on('connection', function(client) {
 
-		console.log("Client connected to websocket");
-
 		// Add the client to the connected clients for the specified session 
 		client.on('join', function(data) {
+			console.log("Client " + client.request.user + " connected to socket");
+
+			// Load session if it's been removed from memory
+			if (app.locals.cardssessions[data.session_id].session == null) {
+				socket_io.sync_session(client, 1, session_id);	
+			}
 
 			// Client is asking to join the room for this session
 			// Check they're allowed to
@@ -104,24 +110,31 @@ var socket_io = function(app, io) {
 		// Client will send a move_end message once
 		// dragging has stopped.  We sync at this point
 		client.on('move_end', function(data) {
-			console.log("Received move_end. Saving session to DB")
-			var session_id = data.session_id;
 
-			// Write to DB
-			var session = app.locals.cardssessions[session_id].session;
-			session.save().then(function() {
+			// Only try and save the session if it exists
+			if (typeof (app.locals.cardssessions[data.session_id]) != 'undefined') {
+				console.log("Session data not in memory, loading");
+				socket_io.sync_session(client, 1, session_id);
+			
+				console.log("Received move_end. Saving session to DB")
+				var session_id = data.session_id;
 
-				// TODO:  This is inefficient as we already have the latest session
-				// in memory, but it's useful because
-				// it allows us to reload the session participants with their
-				// extra data (if there are new ones)
-				// Read from DB and sync
-				//
-				// We don't want the caller to get this message as it causes
-				// Angular to refresh.  TODO: Bit of a hack
-				console.log("Saved to DB");
-				socket_io.sync_session(client, 0, session_id);
-			});
+				// Write to DB
+				var session = app.locals.cardssessions[session_id].session;
+				session.save().then(function() {
+
+					// TODO:  This is inefficient as we already have the latest session
+					// in memory, but it's useful because
+					// it allows us to reload the session participants with their
+					// extra data (if there are new ones)
+					// Read from DB and sync
+					//
+					// We don't want the caller to get this message as it causes
+					// Angular to refresh.  TODO: Bit of a hack
+					console.log("Saved to DB");
+					socket_io.sync_session(client, 0, session_id);
+				});
+			}
 		});
 
 		client.on('delete_card', function(data) {
@@ -164,20 +177,33 @@ var socket_io = function(app, io) {
 		});
 
 		client.on('move_card', function(data) {
-			var session_id = data.session_id;
-			
-			// Update the in-memory session
-			var session = app.locals.cardssessions[session_id].session;
-			var card_id = data.card._id;
-			var card = session.findCard(card_id);
-			
-			card.x = data.card.x;
-			card.y = data.card.y;
-			card.text = data.card.text;
 
-			client.to(session_id).emit('card_moved', {
-				card: data.card	
-			});
+			if (typeof (app.locals.cardssessions[data.session_id]) == 'undefined') {
+				console.log("Session data not in memory, loading");
+				socket_io.sync_session(client, 1, session_id);
+			} else {
+
+				var session_id = data.session_id;
+			
+				// Update the in-memory session
+				//
+				//
+				// TODO: There is a defect here.  cardssessions is undefined
+				//
+				// The session may not have been initialised.  Fix. Upon reconnection from a client
+				// we need to reload the session that they were trying to view.
+				var session = app.locals.cardssessions[session_id].session;
+				var card_id = data.card._id;
+				var card = session.findCard(card_id);
+			
+				card.x = data.card.x;
+				card.y = data.card.y;
+				card.text = data.card.text;
+
+				client.to(session_id).emit('card_moved', {
+					card: data.card	
+				});
+			}
 		});
 
 		// Handle a request to join a session
