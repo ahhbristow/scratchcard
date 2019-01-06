@@ -7,11 +7,11 @@ machine:
 test:
     override:
         - ./node_modules/npm-run-all/bin/npm-run-all/index.js --parallel -r start start-mock-google-oauth start-chromedriver test
-    post:
-        - docker info
-        - docker build -t $DOCKER_USER/index_cards .
-        - docker login -u $DOCKER_USER -p $DOCKER_PASS -e $DOCKER_EMAIL
-        - docker push $DOCKER_USER/index_cards
+#    post:
+#        - docker info
+#        - docker build -t $DOCKER_USER/index_cards .
+#        - docker login -u $DOCKER_USER -p $DOCKER_PASS -e $DOCKER_EMAIL
+#        - docker push $DOCKER_USER/index_cards
         
 deployment:
     staging:
