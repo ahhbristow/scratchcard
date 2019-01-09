@@ -1,5 +1,5 @@
 var cardsSession = require('./../models/session.js');
-
+var sessionManager = require('./../models/session_manager.js');
 /*
  * websocket.js
  *
@@ -15,6 +15,7 @@ var socket_io = function(app, io) {
 	// Socket IO object needs to know
 	// about the app to be able to update
 	// the in memory objects
+	sessionManager.app = app;
 	this.app = app;
 	this.io = io;
 
@@ -29,112 +30,90 @@ var socket_io = function(app, io) {
 	 */
 	this.sync_session = function(client, send_to_caller, session_id) {
 
-		// Read the session from the DB
+		console.log("Syncing session (" + session_id + ")");
 		var socket_io = this;
-		cardsSession.getSession(session_id).then(function(session) {
+		sessionManager.loadSession(session_id).then(function(session) {
 
-			// Update global mem
-			socket_io.app.locals.cardssessions[session_id].session = session;
+			// Successfully loaded session
 
-			// Push to all clients
-			var connected_users = socket_io.app.locals.cardssessions[session_id].connected_users;
+			var connected_users = sessionManager.getConnectedUsers(session_id);
 			var msg = {
 				"session_id": session_id,
-			"session": session,
-			"connected_users": connected_users
+				"session": session,
+				"connected_users": connected_users
 			}
-
 			if (send_to_caller) {
 				socket_io.io.to(session_id).emit('sync', msg);
 			} else {
 				client.to(session_id).emit('sync', msg);
 			}
-		});
+		})
+			.catch(function(err) {
+				console.log(err);	
+			});
 	}
-
-	/*
-	 * Push out to all clients without reloading from the DB.
-	 * Used for handling updates to card positions, where we
-	 * don't need to sync major session updates (such as new
-	 * participant)
-	 */
-	this.soft_sync_session = function(client, session_id) {
-
-		var socket_io = this;
-		client.to(session_id).emit('sync', {
-			"session_id"     : session_id,
-			"session"        : socket_io.app.locals.cardssessions[session_id].session,
-			"connected_users": socket_io.app.locals.cardssessions[session_id].connected_users
-		});
-	}
-
 
 	// Receive socket connection
 	var socket_io = this;
 	io.on('connection', function(client) {
+		console.log("Client " + client.request.user + " connected to socket");
 
-		// Add the client to the connected clients for the specified session 
+		/* 
+		 * Handle a "join" session message from a client.
+		 *  - Check they have permission to join the SocketIO room for this session
+		 */
 		client.on('join', function(data) {
-			console.log("Client " + client.request.user + " connected to socket");
-
-			// Load session if it's been removed from memory
-			if (app.locals.cardssessions[data.session_id].session == null) {
-				socket_io.sync_session(client, 1, session_id);	
-			}
-
-			// Client is asking to join the room for this session
-			// Check they're allowed to
-			var user = client.request.user;
 			var session_id = data.session_id;
+			socket_io.sync_session(client, 1, session_id);
+
+			// If the user has permission, 
+			var user = client.request.user;
 			console.log("User " + user._id + " wants to connect to session " + session_id);
 
-			// Get the participant, and set it to connected
-			var session = app.locals.cardssessions[data.session_id].session;
+			var session = sessionManager.getSession(session_id);
 			if (session.accessibleBy(user)) {
+
+				// Join the SocketIO room
 				client.join(session_id);
 
+				// Add this user to the list of connected users
+				// and sync so everyone can see them
 				app.locals.cardssessions[session_id].connected_users[user._id] = {
 					user: user,
-			connected: 1
+					connected: 1
 				}
+				socket_io.sync_session(client, 1, session_id);
+
 				console.log("User has permission, connection successful");
 			} else {
 				console.log("User doesn't have permission to connect");
 			}
 
-			// Sync the entire session so all clients receive the update
-			socket_io.sync_session(client, 1, session_id);	
 		});
 
 
 		// Client will send a move_end message once
 		// dragging has stopped.  We sync at this point
 		client.on('move_end', function(data) {
+			var session_id = data.session_id;
+			sessionManager.saveSession(session_id).then(function(res) {
 
-			// Only try and save the session if it exists
-			if (typeof (app.locals.cardssessions[data.session_id]) != 'undefined') {
-				console.log("Session data not in memory, loading");
-				socket_io.sync_session(client, 1, session_id);
-			
-				console.log("Received move_end. Saving session to DB")
-				var session_id = data.session_id;
+				// TODO: Check res. Should be 0 for success
+				console.log("Save completed with code: " + res);
 
-				// Write to DB
-				var session = app.locals.cardssessions[session_id].session;
-				session.save().then(function() {
-
-					// TODO:  This is inefficient as we already have the latest session
-					// in memory, but it's useful because
-					// it allows us to reload the session participants with their
-					// extra data (if there are new ones)
-					// Read from DB and sync
-					//
-					// We don't want the caller to get this message as it causes
-					// Angular to refresh.  TODO: Bit of a hack
-					console.log("Saved to DB");
-					socket_io.sync_session(client, 0, session_id);
-				});
-			}
+				// TODO:  This is inefficient as we already have the latest session
+				// in memory, but it's useful because
+				// it allows us to reload the session participants with their
+				// extra data (if there are new ones)
+				// Read from DB and sync
+				//
+				// We don't want the caller to get this message as it causes
+				// Angular to refresh.  TODO: Bit of a hack
+				//
+				// TODO: This shouldn't be a problem though surely because the
+				// session data should match what the local data is?
+				sync_session(client, 1, session_id);
+			});
 		});
 
 		client.on('delete_card', function(data) {
@@ -144,9 +123,9 @@ var socket_io = function(app, io) {
 			// as we don't check that the user is allowed to
 			// actually update this session
 			var session_id = data.session_id;
-			
+
 			// Delete the card from in-memory session object
-			var session = app.locals.cardssessions[session_id].session;
+			var session = sessionManager.getSession(session_id);
 			var index = session.getIndexOf(data.card._id);
 
 			if (index != -1) {
@@ -165,12 +144,9 @@ var socket_io = function(app, io) {
 			// as we don't check that the user is allowed to
 			// actually update this session
 			var session_id = data.session_id;
-			
-			// Update the in-memory session
-			var session = app.locals.cardssessions[session_id].session;
+
+			var session = sessionManager.getSession(session_id);
 			session.cards.push(data.card);
-		
-			// Save entire session and synchronise everyone
 			session.save().then(function() {
 				socket_io.sync_session(client, 1, session_id);
 			});
@@ -178,15 +154,13 @@ var socket_io = function(app, io) {
 
 		client.on('move_card', function(data) {
 
-			if (typeof (app.locals.cardssessions[data.session_id]) == 'undefined') {
-				console.log("Session data not in memory, loading");
+			// TODO: Validate websocket data.  We should do this everywhere
+			var session_id = data.session_id;
+			if (typeof (app.locals.cardssessions[session_id]) == 'undefined') {
+				console.log("Session (id = " + session_id + ") not in memory, loading");
 				socket_io.sync_session(client, 1, session_id);
 			} else {
-
-				var session_id = data.session_id;
-			
 				// Update the in-memory session
-				//
 				//
 				// TODO: There is a defect here.  cardssessions is undefined
 				//
@@ -195,7 +169,7 @@ var socket_io = function(app, io) {
 				var session = app.locals.cardssessions[session_id].session;
 				var card_id = data.card._id;
 				var card = session.findCard(card_id);
-			
+
 				card.x = data.card.x;
 				card.y = data.card.y;
 				card.text = data.card.text;
@@ -206,29 +180,42 @@ var socket_io = function(app, io) {
 			}
 		});
 
-		// Handle a request to join a session
-		// TODO: Convert to HTTP?
+
+		/*
+		 * Handle a request to join a session
+		 * TODO: Convert to HTTP?
+		 */
 		client.on('request_permission',function(data) {
 
 			var user_id = data.user_id;
 			var session_id = data.session_id;
 			console.log("User " + user_id + " requesting permission to session " + session_id);
 
-			var session = app.locals.cardssessions[session_id].session;
-			session.requestParticipation(user_id).then(function() {
-				// Success
-				console.log("Session saved, permission requested");
-				client.emit('request_permission_cb', {
-					status: "success"
-				});
-				socket_io.sync_session(client, 1, session_id);
+			sessionManager.loadSession(session_id).then(function(session) {
+				session.requestParticipation(user_id).then(function() {
+					// Success
+					console.log("Session saved, permission requested");
+					client.emit('request_permission_cb', {
+						status: "success"
+					});
+					socket_io.sync_session(client, 1, session_id);
 
-			},function() {
-				// Error
-				console.log("Session unsaved, permission not requested");
-				client.emit('request_permission_cb', {
-					status: "error"
+				})
+				.catch(function(err) {
+					console.log(err);
+					console.log("Session unsaved, permission not requested");
+					client.emit('request_permission_cb', {
+						status: "error"
+					});
 				});
+			})
+			.catch (function(err) {
+				// We couldn't even load the session
+				// TODO: We should show an error of
+				// some kind.
+				//
+				// At the moment just silently ignore.
+				// Nothing will happen on frontend
 			});
 
 		});
