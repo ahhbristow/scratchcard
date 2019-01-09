@@ -3,23 +3,25 @@ var Schema = mongoose.Schema;
 
 var CardSchema = new Schema({
 	text: String,
-    x: Number,
-    y: Number,
-    type: String
+	x: Number,
+	y: Number,
+	type: String
 });
 
 var ParticipantSchema = new Schema({
 	user_id: {type:mongoose.Schema.Types.ObjectId,ref: 'User'},
-    status: {type:String, default: 'P'}
+	status: {type:String, default: 'P'}
 });
 
 
 var CardsSessionSchema = new Schema({
 	id: Number,
-    name: String,
-    creator: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-    participants: [ParticipantSchema],
-    cards: [CardSchema]
+	name: String,
+	creator: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+	participants: [ParticipantSchema],
+	cards: [CardSchema]
+},{
+	usePushEach: true
 });
 
 /*
