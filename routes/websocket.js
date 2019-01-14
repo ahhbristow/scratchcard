@@ -152,32 +152,12 @@ var socket_io = function(app, io) {
 			});
 		});
 
+		// TODO: Should we check whether handleCardMove was successful?
 		client.on('move_card', function(data) {
-
-			// TODO: Validate websocket data.  We should do this everywhere
-			var session_id = data.session_id;
-			if (typeof (app.locals.cardssessions[session_id]) == 'undefined') {
-				console.log("Session (id = " + session_id + ") not in memory, loading");
-				socket_io.sync_session(client, 1, session_id);
-			} else {
-				// Update the in-memory session
-				//
-				// TODO: There is a defect here.  cardssessions is undefined
-				//
-				// The session may not have been initialised.  Fix. Upon reconnection from a client
-				// we need to reload the session that they were trying to view.
-				var session = app.locals.cardssessions[session_id].session;
-				var card_id = data.card._id;
-				var card = session.findCard(card_id);
-
-				card.x = data.card.x;
-				card.y = data.card.y;
-				card.text = data.card.text;
-
-				client.to(session_id).emit('card_moved', {
-					card: data.card	
-				});
-			}
+			sessionManager.handleCardMove(data);
+			client.to(session_id).emit('card_moved', {
+				card: data.card	
+			});
 		});
 
 

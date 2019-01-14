@@ -1,0 +1,33 @@
+version: "3.0"
+services:
+
+  # TODO: Secrets should come from env_vars
+  scratchcard:
+    image: scratchcard
+    environment:
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - GOOGLE_CALLBACK=${GOOGLE_CALLBACK}
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - MONGOLAB_URI=${MONGOLAB_URI}
+      - NODE_ENV=${NODE_ENV}
+    depends_on:
+      - mongo
+    ports:
+      - 4072:4072
+  
+  mock-google:
+    build: ./google_mock_server 
+    ports:
+      - 8080:8080
+
+  mongo:
+    image: mongo:latest
+
+  selenium-chrome:
+    image: selenium/standalone-chrome:latest
+    ports:
+      - "4444:4444"
+
+  #protractor:
+    #build: ./protractor

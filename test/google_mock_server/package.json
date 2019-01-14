@@ -1,0 +1,15 @@
+{
+  "name": "google_mock_server",
+  "version": "1.0.0",
+  "description": "A lightweight server that can be used as a mock in place of Google OAuth.",
+  "main": "mock_google_server.js",
+  "scripts": {
+    "start": "node mock_google_server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shaun Bristow",
+  "license": "MIT",
+  "devDependencies": {
+    "httpdispatcher": "^2.1.0"
+  }
+}

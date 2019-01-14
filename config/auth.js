@@ -1,4 +1,3 @@
-// TODO: clientSecret last rotated on 8/2/2016
 module.exports = {
 	google_auth : {
 		'clientID'      : process.env.CLIENT_ID,

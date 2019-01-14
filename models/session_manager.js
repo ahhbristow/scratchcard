@@ -13,32 +13,57 @@ var SessionManager = function() {
 
 
 /*
+ * Handle a card move message from a client, updating the card
+ * position in memory.
+ *
+ * If the session isn't present, we just drop messages and do
+ * a session reload on the move_end message
+ *
+ */
+SessionManager.handleCardMove = function(data) {
+	// TODO: Validate websocket data.  We should do this everywhere
+	var session_id = data.session_id;
+	var session = this.getSession();
+	if (!session) {
+		return;
+	} else {
+		// Update the in-memory session
+		//
+		// TODO: There is a defect here.  cardssessions is undefined
+		//
+		// The session may not have been initialised.  Fix. Upon reconnection from a client
+		// we need to reload the session that they were trying to view.
+		var session = this.app.locals.cardssessions[session_id].session;
+		var card_id = data.card._id;
+		var card = session.findCard(card_id);
+
+		card.x = data.card.x;
+		card.y = data.card.y;
+		card.text = data.card.text;
+	}
+}
+
+
+/*
  * Load the session into global memory (cardssessions)
  *
  */
 SessionManager.loadSession = function(session_id) {
-	console.log("Loading session from DB: " + session_id);
+
+	var sess_mgr = this;
+
+	console.log("INFO: SessionManager.loadSession: Loading session from DB: " + session_id);
 	return new Promise(function(resolve, reject) {
 		cardsSession.getSession(session_id).then(function(session) {
-
-			// Update global mem
-			// TODO: Handle the error case, session will be null
-			if (session) {
-				try {
-					this.app.locals.cardssessions[session_id] = {};
-					this.app.locals.cardssessions[session_id].session = session;
-					this.app.locals.cardssessions[session_id].connected_users = {};
-					console.log("Loaded session (" + session_id + ") from DB");
-					resolve(session);
-				} catch (error) {
-					console.log(error);
-					reject(Error("Unable to update session in memory"));
-				}
-			} else {
-				console.log("Could not load session (" + session_id + ") from DB");
-				reject(Error("Unable to load session"));
-			}
-		});
+			sess_mgr.app.locals.cardssessions[session_id] = {};
+			sess_mgr.app.locals.cardssessions[session_id].session = session;
+			sess_mgr.app.locals.cardssessions[session_id].connected_users = {};
+			console.log("INFO: SessionManager.loadSession: Loaded session (" + session_id + ") from DB");
+			resolve(session);
+		})
+			.catch(function(err) {
+				reject(Error("ERROR: SessionManager.loadSession() - Could not load session from DB"));
+			});
 	})
 
 }
@@ -75,9 +100,9 @@ SessionManager.saveSession = function(session_id) {
 					reject(1);
 				});
 			})
-			.catch(function(err) {
-				console.log(err);	
-			});
+				.catch(function(err) {
+					console.log(err);	
+				});
 		});
 	}
 

@@ -1,0 +1,12 @@
+{
+  "name": "protractor",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "./node_modules/protractor/bin/protractor"
+  },
+  "dependencies": {
+    "chromedriver": "^2.45.0",
+    "protractor": "^5.4.2"
+  }
+}

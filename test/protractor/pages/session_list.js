@@ -3,7 +3,7 @@ var SessionListPage = function(browser) {
 	this.browser = browser;
 
 	this.get = function() {
-		this.browser.get('https://localhost:4072/');
+		this.browser.get('https://' + app_host + ':4072/');
 	}
 
 	this.has_page_loaded = function() {

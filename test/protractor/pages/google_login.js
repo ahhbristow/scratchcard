@@ -1,4 +1,4 @@
-var TestConfig = require(__dirname + '/../../../config/test');
+var TestConfig = require('./../config/test');
 var fs = require('fs');
 var GoogleLoginPage = function (browser, account) {
 
@@ -8,9 +8,9 @@ var GoogleLoginPage = function (browser, account) {
 
 	function writeScreenShot(browser, filename) {
 		return browser.takeScreenshot().then(function(png_data) {
-			var stream = fs.createWriteStream(filename);
-			stream.write(new Buffer(png_data, 'base64'));
-			stream.end();
+			var strm = fs.createWriteStream(filename);
+			strm.write(new Buffer(png_data, 'base64'));
+			strm.end();
 		});
 	}
 
