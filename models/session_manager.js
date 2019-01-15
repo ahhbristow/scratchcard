@@ -23,23 +23,18 @@ var SessionManager = function() {
 SessionManager.handleCardMove = function(data) {
 	// TODO: Validate websocket data.  We should do this everywhere
 	var session_id = data.session_id;
-	var session = this.getSession();
+	var session = this.getSession(session_id);
 	if (!session) {
+		console.log("ERROR: SessionManager.handleCardMove(): session not in memory");
 		return;
 	} else {
-		// Update the in-memory session
-		//
-		// TODO: There is a defect here.  cardssessions is undefined
-		//
-		// The session may not have been initialised.  Fix. Upon reconnection from a client
-		// we need to reload the session that they were trying to view.
-		var session = this.app.locals.cardssessions[session_id].session;
 		var card_id = data.card._id;
 		var card = session.findCard(card_id);
 
 		card.x = data.card.x;
 		card.y = data.card.y;
 		card.text = data.card.text;
+		console.log("Moved card to (" + card.x + "," + card.y + ")");
 	}
 }
 
@@ -73,7 +68,6 @@ SessionManager.loadSession = function(session_id) {
  *
  */
 SessionManager.getSession = function(session_id) {
-
 	if (typeof this.app.locals.cardssessions[session_id] != 'undefined') {
 		return this.app.locals.cardssessions[session_id].session; 
 	} else {

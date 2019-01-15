@@ -155,7 +155,7 @@ var socket_io = function(app, io) {
 		// TODO: Should we check whether handleCardMove was successful?
 		client.on('move_card', function(data) {
 			sessionManager.handleCardMove(data);
-			client.to(session_id).emit('card_moved', {
+			client.to(data.session_id).emit('card_moved', {
 				card: data.card	
 			});
 		});
