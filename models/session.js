@@ -138,13 +138,12 @@ CardsSessionSchema.methods.getIndexOf = function(id) {
 // =============================================
 // Static methods
 
+// Wrapper function to hide Mongoose specific call
+// from caller
 CardsSessionSchema.statics.getSession = function(session_id) {
 	return CardsSession.findById(session_id)
 		.populate('participants.user_id creator')
-		.exec(function (err, session) {
-			if (err) return next(err);
-			return session;
-		});
+		.exec();
 }
 
 

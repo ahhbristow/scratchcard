@@ -1,24 +1,25 @@
-var HtmlScreenshotReporter = require('protractor-jasmine2-screenshot-reporter');
+//var HtmlScreenshotReporter = require('protractor-jasmine2-screenshot-reporter');
 var GoogleLoginPage = require('./pages/google_login');
-var TestConfig = require(__dirname + '/../../config/test');
+var TestConfig = require('./config/test');
 
 // abstract writing screen shot to a file
-var fs = require('fs');
-function writeScreenShot(data, filename) {
-	var stream = fs.createWriteStream(filename);
-	stream.write(new Buffer(data, 'base64'));
-	stream.end();
-}
+//var fs = require('fs');
+//function writeScreenShot(data, filename) {
+//	var stream = fs.createWriteStream(filename);
+//	stream.write(new Buffer(data, 'base64'));
+//	stream.end();
+//}
 
 exports.config = {
-	specs: ['google_login.js','sessions.js','request_participation.js'],
-	seleniumAddress: 'http://localhost:9515',
+	specs: ['src/google_login.js','src/sessions.js','src/request_participation.js'],
+	seleniumAddress: 'http://localhost:4444/wd/hub',
 	onPrepare: function() {
-
 
 		// Fork a new browser instance
 		browser2 = browser.forkNewDriverInstance();
+		app_host = "localhost";
 
+		/*
 		// Register the browsers for screenshots
 		jasmine.getEnv().addReporter(
 			new HtmlScreenshotReporter({
@@ -27,6 +28,7 @@ exports.config = {
 				browsers: [browser,browser2]
 			})
 		);
+		*/
 	
 
 	},

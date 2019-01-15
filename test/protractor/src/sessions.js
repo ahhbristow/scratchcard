@@ -1,5 +1,5 @@
-var LoginPage = require('./pages/login');
-var SessionListPage = require('./pages/session_list');
+var LoginPage = require('./../pages/login');
+var SessionListPage = require('./../pages/session_list');
 describe('Creating and accessing sessions',function() {
 
 	var session_list_page = new SessionListPage(browser);
@@ -7,7 +7,7 @@ describe('Creating and accessing sessions',function() {
 
 	beforeAll(function() {
 		// Logout and back in again
-		browser.get('https://localhost:4072/logout/');
+		browser.get('https://' + app_host + ':4072/logout/');
 		login_page.get();
 		login_page.login();
 	});

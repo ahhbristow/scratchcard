@@ -4,7 +4,7 @@ describe('Creating a session',function() {
 
 	beforeAll(function() {
 		console.log("Logging in");
-		browser.get('https://localhost:4072/');
+		browser.get('https://' + app_host + ':4072/');
 		element(by.id('sign_in_button')).click();
 	});
     /*  
@@ -25,7 +25,7 @@ describe('Creating a session',function() {
 	});
 
 	it('should not appear on another users list of sessions', function() {
-		browser2.get('http://localhost:4072/');
+		browser2.get('http://' + app_host + ':4072/');
 		var session_link = element2(by.linkText(session_name));
 		expect(session_link).not.toBe(null);
 	});
@@ -39,7 +39,7 @@ describe('Loading of a session with existing cards', function() {
 	var session_url;
 
 	beforeAll(function() {
-		browser.get('https://localhost:4072/');
+		browser.get('https://' + app_host + ':4072/');
 		
 		// Create a session
 		session_name = "Demo" + Date.now();

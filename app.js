@@ -56,7 +56,7 @@ var config = require(__dirname + '/config/' + env);
 //=======================
 // Init DB
 var mongoose = require('mongoose');
-var mongo_uri = config.mongo_uri;
+var mongo_uri = process.env.MONGOLAB_URI;
 mongoose.connect(mongo_uri, function(err) {
 	if(err) {
 		console.log('connection error', err);

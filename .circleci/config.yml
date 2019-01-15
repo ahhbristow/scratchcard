@@ -1,2 +1,11 @@
-# Config Translation Error
-# Could not find stored inference data.  Please run a build and try again.
+version: 2
+jobs:
+  build:
+    machine: true
+    working_directory: ~/index_cards
+    steps:
+      - checkout
+      - run: docker build -t scratchcard --build-arg CERT_PASSPHRASE=${CERT_PASSPHRASE} .
+      - run: cd ~/index_cards/test && docker build -t protractor ./protractor && docker-compose up -d
+      - run: cd ~/index_cards/test && docker-compose exec scratchcard /usr/src/app/node_modules/mocha/bin/mocha /usr/src/app/test/unit/*.js
+      - run: cd ~/index_cards/test && docker run protractor

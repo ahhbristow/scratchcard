@@ -1,13 +1,13 @@
-var LoginPage = require('./pages/login');
-var SessionListPage = require('./pages/session_list');
-var SessionPage = require('./pages/session');
+var LoginPage = require('./../pages/login');
+var SessionListPage = require('./../pages/session_list');
+var SessionPage = require('./../pages/session');
 		
 // abstract writing screen shot to a file
 var fs = require('fs');
 function writeScreenShot(data, filename) {
-	var stream = fs.createWriteStream(filename);
-	stream.write(new Buffer(data, 'base64'));
-	stream.end();
+	var strm = fs.createWriteStream(filename);
+	strm.write(new Buffer(data, 'base64'));
+	strm.end();
 }
 
 describe('Requesting permission to participate in a session',function() {
@@ -19,7 +19,7 @@ describe('Requesting permission to participate in a session',function() {
 
 	beforeAll(function() {
 		// Logout and back in again
-		browser.get('https://localhost:4072/logout/');
+		browser.get('https://' + app_host + ':4072/logout/');
 
 
 		browser.takeScreenshot().then(function (png) {
@@ -33,7 +33,7 @@ describe('Requesting permission to participate in a session',function() {
 			writeScreenShot(png, 'browser1_after_login.png');
 		});
 
-		browser2.get('https://localhost:4072/logout/');
+		browser2.get('https://' + app_host + ':4072/logout/');
 		browser2.takeScreenshot().then(function (png) {
 			writeScreenShot(png, 'browser2_before_login.png');
 		}).then(function() {
