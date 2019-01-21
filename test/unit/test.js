@@ -95,7 +95,7 @@ describe('Model Tests', function() {
 
 		var session_id = fake_session._id;
 		var user_id = 1;
-		SessionRoutes.handleApproveParticipant(user_id, session_id).then(function(value) {
+		SessionManager.handleApproveParticipant(user_id, session_id).then(function(value) {
 			// Assert that the participant was actually
 			done();
 		}).catch(function(err) {
