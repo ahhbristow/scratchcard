@@ -9,7 +9,13 @@ var User = require(__dirname + '/../models/user.js');
 // Load Middleware
 var auth = require(__dirname + '/../middleware/auth');
 
-module.exports = function() {
+var sessionManager = require('./../models/session_manager.js');
+var SocketRouter = require('./../routes/websocket');
+
+/*
+ * Singleton to handle routing.
+ */
+var SessionRoutes = function() {
 
 	// Get home page (list of sessions)
 	router.get('/',function(req, res, next) {
@@ -26,22 +32,22 @@ module.exports = function() {
 		// logged in as.
 		var user = req.user;
 		CardsSession.find({creator: user._id})
-		.populate('creator','username')
-		.exec(function (err, data) {
-			if (err) return next(err);
-
-			var resp = {};
-			resp.user = user;
-			resp.sessions = data;
-
-			// Get participating sessions
-			CardsSession.find({'participants.user_id': user._id})
-			.populate('participant')
+			.populate('creator','username')
 			.exec(function (err, data) {
-				resp.participating_sessions = data;
-				res.json(resp);
+				if (err) return next(err);
+
+				var resp = {};
+				resp.user = user;
+				resp.sessions = data;
+
+				// Get participating sessions
+				CardsSession.find({'participants.user_id': user._id})
+					.populate('participant')
+					.exec(function (err, data) {
+						resp.participating_sessions = data;
+						res.json(resp);
+					});
 			});
-		});
 	});
 
 	// Add new session
@@ -100,11 +106,15 @@ module.exports = function() {
 		var user_id = req.params.user_id;
 		var session_id = req.params.session_id;
 
-		
-		var session = req.app.locals.cardssessions[session_id].session;
-		session.approveParticipant(user_id).then(function() {	
-			var status = 1;
-			res.json({"status": status, "session": session});
+		// TODO: I think the HTTP and Websocket routes should just be combined into a
+		// single router object that handles all incoming messages and calls
+		// the SessionManager as required.
+		sessionManager.handleApproveParticipant(user_id, session_id).then(function() {
+			console.log("User approved");
+			SocketRouter.sendParticipantApproved(user_id,session_id);
+			res.json({"status": 1});
+		}).catch(function(err) {
+			console.log(err);
 		});
 
 	});
@@ -127,3 +137,5 @@ module.exports = function() {
 
 	return router;
 }
+
+module.exports = SessionRoutes;

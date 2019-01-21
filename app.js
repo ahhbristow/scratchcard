@@ -121,12 +121,18 @@ var socket_io = require('./init/websocket.js')(
 	sessionStore
 );
 
-// Load routes
-var auth_routes    = require('./routes/auth')(passport)
-var session_routes = require('./routes/sessions')();
-var socket_routes  = require('./routes/websocket.js')(app,io);
-app.use('/', auth_routes);
-app.use('/', session_routes);
+/* =========== Load Routes ================ */
+var AuthRoutes = require('./routes/auth')(passport)
+var SessionManager = require('./models/session_manager');
+SessionManager.init(app);
+
+var SocketRoutes = require('./routes/websocket.js');
+SocketRoutes.init(app,io);
+
+var SessionRoutes = require('./routes/sessions')();
+
+app.use('/', AuthRoutes);
+app.use('/', SessionRoutes);
 
 
 /* =========== Error Handling ================ */

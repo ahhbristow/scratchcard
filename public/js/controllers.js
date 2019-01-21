@@ -112,6 +112,17 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		});
 	}
 
+	// Handle a message indicating that we were approved
+	// for a session
+	socket.on('approved', function(msg) {
+		console.log(msg);
+		console.log("Approved for session: " + msg.session_id);
+
+		// Reload the page
+		// Reload session
+		window.location.reload();
+	});
+
 	// Handle socket events
 	socket.on('card_moved', function(card) {
 		$scope.cardMoved(card);
@@ -164,10 +175,10 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		$http.put(path).
  			success(function(resp, status, headers, config) {
 				var approved = resp.status;
-				var session  = resp.session;
+				//var session  = resp.session;
 				console.log("Approval status: " + approved);
 
-				$scope.session = session;
+				//$scope.session = session;
 		});
 
 	}

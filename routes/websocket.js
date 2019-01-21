@@ -10,53 +10,21 @@ var sessionManager = require('./../models/session_manager.js');
 
 
 
-var socket_io = function(app, io) {
+var socket_io = function() {}
 
-	// Socket IO object needs to know
-	// about the app to be able to update
-	// the in memory objects
-	sessionManager.app = app;
-	this.app = app;
+socket_io.init = function(app,io) {
+
 	this.io = io;
-
-	console.log("Setting up websocket routes");
-
-	/* TODO: Replace with save() call
-	 * app.sync_session
-	 *
-	 * Read from the DB and push out to all clients.  If send_to_caller
-	 * is 1 then we should send the message to all clients including the
-	 * initiator
-	 */
-	this.sync_session = function(client, send_to_caller, session_id) {
-
-		console.log("Syncing session (" + session_id + ")");
-		var socket_io = this;
-		sessionManager.loadSession(session_id).then(function(session) {
-
-			// Successfully loaded session
-
-			var connected_users = sessionManager.getConnectedUsers(session_id);
-			var msg = {
-				"session_id": session_id,
-				"session": session,
-				"connected_users": connected_users
-			}
-			if (send_to_caller) {
-				socket_io.io.to(session_id).emit('sync', msg);
-			} else {
-				client.to(session_id).emit('sync', msg);
-			}
-		})
-			.catch(function(err) {
-				console.log(err);	
-			});
-	}
+	this.clients = {};
+	this.app = app;  // TODO: Remove, to be handled in SessionManager
+	var self = this;
 
 	// Receive socket connection
-	var socket_io = this;
 	io.on('connection', function(client) {
+
+		// Store the client
 		console.log("Client " + client.request.user + " connected to socket");
+		self.clients[client.request.user._id] = client;
 
 		/* 
 		 * Handle a "join" session message from a client.
@@ -64,7 +32,7 @@ var socket_io = function(app, io) {
 		 */
 		client.on('join', function(data) {
 			var session_id = data.session_id;
-			socket_io.sync_session(client, 1, session_id);
+			self.syncSession(client, session_id);
 
 			// If the user has permission, 
 			var user = client.request.user;
@@ -78,11 +46,12 @@ var socket_io = function(app, io) {
 
 				// Add this user to the list of connected users
 				// and sync so everyone can see them
-				app.locals.cardssessions[session_id].connected_users[user._id] = {
+				// TODO: Move this to SessionManager
+				self.app.locals.cardssessions[session_id].connected_users[user._id] = {
 					user: user,
 					connected: 1
 				}
-				socket_io.sync_session(client, 1, session_id);
+				self.syncSession(client, session_id);
 
 				console.log("User has permission, connection successful");
 			} else {
@@ -112,7 +81,7 @@ var socket_io = function(app, io) {
 				//
 				// TODO: This shouldn't be a problem though surely because the
 				// session data should match what the local data is?
-				sync_session(client, 1, session_id);
+				self.syncSession(client, session_id);
 			});
 		});
 
@@ -134,7 +103,7 @@ var socket_io = function(app, io) {
 
 			// Save entire session and synchronise everyone
 			session.save().then(function() {
-				socket_io.sync_session(client, 1, session_id);
+				self.syncSession(client, session_id);
 			});
 		});
 
@@ -148,7 +117,7 @@ var socket_io = function(app, io) {
 			var session = sessionManager.getSession(session_id);
 			session.cards.push(data.card);
 			session.save().then(function() {
-				socket_io.sync_session(client, 1, session_id);
+				self.syncSession(client, session_id);
 			});
 		});
 
@@ -178,18 +147,16 @@ var socket_io = function(app, io) {
 					client.emit('request_permission_cb', {
 						status: "success"
 					});
-					socket_io.sync_session(client, 1, session_id);
+					self.syncSession(client, session_id);
 
-				})
-				.catch(function(err) {
+				}).catch(function(err) {
 					console.log(err);
 					console.log("Session unsaved, permission not requested");
 					client.emit('request_permission_cb', {
 						status: "error"
 					});
 				});
-			})
-			.catch (function(err) {
+			}).catch (function(err) {
 				// We couldn't even load the session
 				// TODO: We should show an error of
 				// some kind.
@@ -197,9 +164,49 @@ var socket_io = function(app, io) {
 				// At the moment just silently ignore.
 				// Nothing will happen on frontend
 			});
-
 		});
 
+	});
+}
+
+socket_io.getClient = function(user_id) {
+
+}
+
+/*
+ * Tell all clients in a room that a participant has been approved.
+ *
+ * TODO: How do we tell the actual participant they've been approved?
+ * They won't be in the room yet. We'd have to find them?
+ *
+ */
+socket_io.sendParticipantApproved = function(user_id, session_id) {
+	// TODO: First check if client is connected
+	var client = this.clients[user_id];
+	var msg = {
+		"session_id": session_id
+	}
+	client.emit('approved', msg);
+}
+
+/* TODO: Replace with save() call
+ * app.syncSession
+ *
+ * Read from the DB and push out to all clients.
+ */
+socket_io.syncSession = function(client, session_id) {
+	console.log("Syncing session (" + session_id + ")");
+	sessionManager.loadSession(session_id).then(function(session) {
+		// Successfully loaded session
+		var connected_users = sessionManager.getConnectedUsers(session_id);
+		var msg = {
+			"session_id": session_id,
+			"session": session,
+			"connected_users": connected_users
+		}
+		socket_io.io.to(session_id).emit('sync', msg);
+	}).catch(function(err) {
+		console.log(err);	
 	});
 }
 

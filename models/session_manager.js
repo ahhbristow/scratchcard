@@ -8,9 +8,11 @@
 
 var cardsSession = require('./../models/session.js');
 
-var SessionManager = function() {
-}
+var SessionManager = function() {}
 
+SessionManager.init = function(app) {
+	this.app = app;
+}
 
 /*
  * Handle a card move message from a client, updating the card
@@ -57,6 +59,7 @@ SessionManager.loadSession = function(session_id) {
 			resolve(session);
 		})
 			.catch(function(err) {
+				console.log(err);
 				reject(Error("ERROR: SessionManager.loadSession() - Could not load session from DB"));
 			});
 	})
@@ -106,6 +109,24 @@ SessionManager.saveSession = function(session_id) {
 		}, function(err) {
 			reject(1);
 		});
+	});
+}
+
+/*
+ * Loads the session if it doesn't exist and approves the participant.  Todo:
+ * should this be pushed down to the session itself?
+ *
+ * No, because the sessionManager looks after all the in-memory sessions
+ * and the Mongoose model doesn't know about this.
+ *
+ */
+SessionManager.handleApproveParticipant = function(user_id, session_id) {
+	return this.loadSession(session_id).then(function(session) {
+		console.log("SessionRoutes.handleApproveParticipant: Loaded session");
+		var approval_outcome = session.approveParticipant(user_id);
+		return approval_outcome;
+	}).catch(function() {
+		return Error("Could not approve");
 	});
 }
 

@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "chromedriver": "^2.45.0",
-    "protractor": "^5.4.2"
+    "protractor": "^5.4.2",
+    "protractor-jasmine2-screenshot-reporter": "^0.5.0"
   }
 }
