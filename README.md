@@ -1,6 +1,16 @@
+
+
+
 # Example Mapping
 
 This is a web-based version of the "[Example Mapping](https://cucumber.io/blog/2015/12/08/example-mapping-introduction)" technique I learned from a talk Matt Wynne (from the Cucumber team) gave at the Agile Testing & BDD eXchange conference in 2014.  Some colleagues and I introduced this to our [company](www.openbet.com) and it made a big difference to how we went about capturing requirements.  Since we use remote teams, we wanted a web-based tool we could use but couldn't find one that fit our needs, so I decided to develop one instead.  I wanted to learn the NodeJS stack anyway, so it was a nice problem to work on!
+
+# Acknowledgements
+Scratchcard is supported by:
+
+<img width="300" src="https://app.scratchcard.io/static/images/browserstack.png" />
+
+BrowserStack gives you instant access to 2000+ real mobile devices and browsers, and is great for testing UI heavy applications such as Scratchcard!
 
 
 ## Install and run locally
