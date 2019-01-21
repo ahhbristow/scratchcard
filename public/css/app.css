@@ -17,6 +17,16 @@ form {
 	margin: 0;
 }
 
+#supporters p {
+	text-align: center;
+	padding: 0;
+	margin: 0;
+}
+#supporters img {
+	display: block;
+	margin: 0px auto;
+}
+
 h1#session_name {
 	display: inline;
 }
