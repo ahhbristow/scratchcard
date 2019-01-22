@@ -5,6 +5,7 @@ var CardSchema = new Schema({
 	text: String,
 	x: Number,
 	y: Number,
+	z: Number,
 	type: String
 });
 
@@ -19,7 +20,8 @@ var CardsSessionSchema = new Schema({
 	name: String,
 	creator: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
 	participants: [ParticipantSchema],
-	cards: [CardSchema]
+	cards: [CardSchema],
+	max_z: Number
 },{
 	usePushEach: true
 });
@@ -134,6 +136,12 @@ CardsSessionSchema.methods.getIndexOf = function(id) {
 	return -1;
 }
 
+CardsSessionSchema.methods.migrate = function() {
+	this.max_z = 0;
+	for (var i = 0; i < this.cards.length; i++) {
+		this.cards[i].z = i;
+	}
+}
 
 // =============================================
 // Static methods
@@ -143,7 +151,17 @@ CardsSessionSchema.methods.getIndexOf = function(id) {
 CardsSessionSchema.statics.getSession = function(session_id) {
 	return CardsSession.findById(session_id)
 		.populate('participants.user_id creator')
-		.exec();
+		.exec()
+		.then(function(session) {
+			// Check if it needs migrating
+			if (typeof session.max_z == 'undefined') {
+				session.migrate();
+			}
+			
+			return session;
+		}).catch(function(err) {
+			return err;	
+		});
 }
 
 

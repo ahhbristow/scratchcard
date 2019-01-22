@@ -81,9 +81,13 @@ describe('Model Tests', function() {
 		// TODO: The logic whether to approve should be separated from the save function()
 
 		var fake_session = new Session();
+		fake_session
+
+		// Stub Mongoose save()
 		var stub = sinon.stub(fake_session, "save").callsFake(function() {
 			return "OK"	
 		});
+		// Stub Mongoose findById()
 		var mock = sinon.mock(Session)
 			.expects('findById')
 			.withArgs(sinon.match.object)
@@ -96,7 +100,8 @@ describe('Model Tests', function() {
 		var session_id = fake_session._id;
 		var user_id = 1;
 		SessionManager.handleApproveParticipant(user_id, session_id).then(function(value) {
-			// Assert that the participant was actually
+			// Assert that the participant was actually approved
+			assert(
 			done();
 		}).catch(function(err) {
 			done();

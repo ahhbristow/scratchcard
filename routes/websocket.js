@@ -128,6 +128,13 @@ socket_io.init = function(app,io) {
 				card: data.card	
 			});
 		});
+		client.on('select_card', function(data) {
+			sessionManager.handleCardMove(data);
+			client.to(data.session_id).emit('card_selected', {
+				card: data.card	
+			});
+		});
+
 
 
 		/*

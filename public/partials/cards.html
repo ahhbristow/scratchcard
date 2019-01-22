@@ -12,7 +12,7 @@
 
 
     <div id="cards">
-        <div class="card_padding" mouse_down="0" ng-repeat="card in session.cards" draggable x="card.x" y="card.y" ng-style="{top:card.y,left:card.x,'z-index':card.z}" ng-blur="deselectCard(card)">
+        <div class="card_padding" mouse_down="0" ng-repeat="card in session.cards" draggable x="card.x" y="card.y" ng-style="{top:card.y,left:card.x,'z-index':card.z}" ng-blur="deselectCard(card)" ng-mousedown="selectCard(card)">
             <button class="delete" ng-click="deleteCard(card,$event)">X</button>
             <div class="card {{selected_card === card._id ? 'selected' : ''}}">
             <textarea

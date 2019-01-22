@@ -21,6 +21,8 @@ SessionManager.init = function(app) {
  * If the session isn't present, we just drop messages and do
  * a session reload on the move_end message
  *
+ * TODO: Can't we just put data.card straight into card?  Why do we need to read every
+ * var and copy?
  */
 SessionManager.handleCardMove = function(data) {
 	// TODO: Validate websocket data.  We should do this everywhere
@@ -35,8 +37,9 @@ SessionManager.handleCardMove = function(data) {
 
 		card.x = data.card.x;
 		card.y = data.card.y;
+		card.z = data.card.z;
 		card.text = data.card.text;
-		console.log("Moved card to (" + card.x + "," + card.y + ")");
+		session.max_z = data.max_z;
 	}
 }
 

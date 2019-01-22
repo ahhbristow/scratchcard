@@ -61,8 +61,16 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	}
 
 	// Push this card to the front of the list
+	// TODO: This should emit an event
 	$scope.selectCard = function(card) {
 		$scope.selected_card = card._id;
+		var max_z = $scope.session.max_z;
+		card.z = max_z + 1;
+		$scope.session.max_z = card.z;
+		socket.emit('select_card', {
+			session_id: $scope.session_id,
+			card: card
+		}, function(result) {});
 	}
 
 	$scope.deselectCard = function(card) {
@@ -80,7 +88,14 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 
 	// Adds a new card to the session
 	$scope.addCard = function(card_type, event) {
-		var card = {text: "", x: event.pageX, y: event.pageY-300, type: card_type};
+		var next_card_z = $scope.session.max_z + 1;
+		var card = {
+			text: "",
+			x: event.pageX,
+			y: event.pageY-300,
+			z: next_card_z,
+			type: card_type
+		};
 		this.session.cards.push(card);
 		socket.emit('add_card', {
 			session_id: $scope.session_id,
@@ -93,7 +108,8 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	$scope.moveCard = function(card) {
 		socket.emit('move_card', {
 			session_id: $scope.session_id,
-			card: card
+			card: card,
+			max_z: $scope.session.max_z
 		}, function(result) {
 
 		});
