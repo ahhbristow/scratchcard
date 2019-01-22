@@ -73,6 +73,16 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		}, function(result) {});
 	}
 
+	$scope.grabCard = function(card) {
+		var max_z = $scope.session.max_z;
+		card.z = max_z + 1;
+		$scope.session.max_z = card.z;
+		socket.emit('select_card', {
+			session_id: $scope.session_id,
+			card: card
+		}, function(result) {});
+	}
+
 	$scope.deselectCard = function(card) {
 		$scope.selected_card = {};
 	}

@@ -21,7 +21,7 @@ var CardsSessionSchema = new Schema({
 	creator: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
 	participants: [ParticipantSchema],
 	cards: [CardSchema],
-	max_z: Number
+	max_z: {type: Number, default: 0}
 },{
 	usePushEach: true
 });
@@ -159,8 +159,6 @@ CardsSessionSchema.statics.getSession = function(session_id) {
 			}
 			
 			return session;
-		}).catch(function(err) {
-			return err;	
 		});
 }
 

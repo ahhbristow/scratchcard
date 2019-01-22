@@ -24,18 +24,21 @@ describe('Model Tests', function() {
 
 	// A session was returned from the DB
 	it("should load a session into memory", function(done) {
+		
+		var fake_session = new Session();
+		console.log("Setting up fake session: " + fake_session);
 		var mock = sinon.mock(Session)
 			.expects('findById')
 			.withArgs(sinon.match.string)
 			.chain('populate')
 			.withArgs(sinon.match.string)
 			.chain('exec')
-			.resolves("some_session_that_needs_mocking");
+			.resolves(fake_session);
 
 		SessionManager.loadSession("1").then(function() {
 			var loaded_session = SessionManager.app.locals.cardssessions["1"].session;
 			assert(
-				loaded_session == "some_session_that_needs_mocking",
+				loaded_session == fake_session,
 				"ERROR"
 			);
 			done();
@@ -81,7 +84,6 @@ describe('Model Tests', function() {
 		// TODO: The logic whether to approve should be separated from the save function()
 
 		var fake_session = new Session();
-		fake_session
 
 		// Stub Mongoose save()
 		var stub = sinon.stub(fake_session, "save").callsFake(function() {
