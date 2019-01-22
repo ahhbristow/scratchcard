@@ -101,7 +101,6 @@ describe('Model Tests', function() {
 		var user_id = 1;
 		SessionManager.handleApproveParticipant(user_id, session_id).then(function(value) {
 			// Assert that the participant was actually approved
-			assert(
 			done();
 		}).catch(function(err) {
 			done();
