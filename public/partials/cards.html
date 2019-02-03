@@ -2,7 +2,7 @@
     <!-- TODO: Move this into an include -->
 </div>
 
-<div id="content" ng-if="loading == 0">
+<div id="content" ng-if="loading == 0" selectable>
     <ng-include src="'/static/partials/menu.html'"></ng-include>
 
     <div id="header">
@@ -10,19 +10,19 @@
         <h1 id="session_name">{{session.name}}</h1>
     </div>
 
-
-    <div id="cards">
-        <div class="card_padding" mouse_down="0"
+    <div id="cards" class="{{selection_group_active == 1 ? 'selection_group_active' : ''" >
+        <div
+	    class="card_padding"
+	    mouse_down="0"
 	    ng-repeat="card in session.cards"
 	    ng-style="{top:card.y,left:card.x,'z-index':card.z}"
 	    ng-blur="deselectCard(card)"
 	    ng-mousedown="grabCard(card)"
-	    x="card.x"
-	    y="card.y"
+            card_id="{{card._id}}"
 	    draggable
 	>
             <button class="delete" ng-click="deleteCard(card,$event)">X</button>
-            <div class="card {{selected_card === card._id ? 'selected' : ''}}">
+	    <div class="card {{card.selected == 1 ? 'selected' : ''}}">
             <textarea
                 class="{{card.type}}"
                 text-focus

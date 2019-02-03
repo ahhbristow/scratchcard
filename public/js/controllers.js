@@ -11,6 +11,7 @@ var cardsControllers = angular.module('cardsControllers', []);
 cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$location','socket',function ($scope,$http,$routeParams,$location,socket) {
 
 	// Init
+	$scope.selection_group = [];
 	$scope.session_id = $routeParams.sessionId;
 	$scope.session = {};
 	$scope.connected_users = {};
@@ -96,6 +97,13 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		$scope.writeSession();
 	}
 
+	$scope.multiSelectCard = function (card_id) {
+		var card = $scope.findCard(card_id);
+		$scope.selection_group.push(card);
+		$scope.selection_group_active = 1;
+		card.selected = 1;
+	}
+
 	// Adds a new card to the session
 	$scope.addCard = function(card_type, event) {
 		var next_card_z = $scope.session.max_z + 1;
@@ -161,6 +169,15 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		var session_details = msg.session;
 		var connected_users = msg.connected_users;
 
+		// TODO: We might have cards selected that we want
+		// to keep
+		// For now though, clear the selection
+		$scope.selection_group_active = 0;
+		$scope.selection_group = [];
+		for (var card of session_details.cards) {
+			card.selected = 0;
+		}
+
 		if ($scope.session_id == session_id) {
 			$scope.session = session_details;	
 			$scope.connected_users = connected_users;
@@ -178,6 +195,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	});
 		
 	$scope.cardMoved = function(msg) {
+		console.log("Handling card_move");
 		var card = this.findCard(msg.card._id);
 		card.x = msg.card.x;
 		card.y = msg.card.y;
@@ -244,6 +262,12 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 			var session = response.session;
 			var user_has_permission = response.has_permission;
 			var permission_requested = response.permission_requested;
+
+			// TODO: Hack: remove and find a better way to do this
+			// initialise each card with selected = 0
+			for (var card of response.session.cards) {
+				card.selected = 0;
+			}
 
 			// Populate $scope
 			$scope.user_has_permission = user_has_permission;
