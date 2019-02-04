@@ -22,3 +22,6 @@ docker-compose -f ./test/docker-compose.yml up -d
 # Build and run protractor
 docker build -t protractor ./test/protractor
 docker run protractor
+
+# Shutdown containers
+docker-compose -f ./test/docker-compose.yml down

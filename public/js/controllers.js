@@ -47,7 +47,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 			console.log(response);
 			$location.path('/sessions');
 		});
-		
+
 	}
 
 	$scope.deleteCard = function(card, event) {
@@ -137,10 +137,10 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	$scope.writeSession = function() {
 		console.log("Sending move_end")
 		socket.emit('move_end', {
-		   session_id: $scope.session_id
+			session_id: $scope.session_id
 		}, function (result) {
 			if (!result) {
-		      		console.log("ERROR");
+				console.log("ERROR");
 			}
 			console.log(result);
 		});
@@ -193,7 +193,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 	socket.on('request_permission_cb', function(msg) {
 		$scope.handlePermissionCB(msg);
 	});
-		
+
 	$scope.cardMoved = function(msg) {
 		console.log("Handling card_move");
 		var card = this.findCard(msg.card._id);
@@ -201,7 +201,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 		card.y = msg.card.y;
 		card.text = msg.card.text
 	}
-	
+
 	$scope.findCard = function(id) {
 		for (var i = 0; i < $scope.session.cards.length; i++) {
 			var card = $scope.session.cards[i];
@@ -217,13 +217,13 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 
 		var path = '/api/sessions/' + this.session_id + '/approveParticipant/' + user_id;
 		$http.put(path).
- 			success(function(resp, status, headers, config) {
+			success(function(resp, status, headers, config) {
 				var approved = resp.status;
 				//var session  = resp.session;
 				console.log("Approval status: " + approved);
 
 				//$scope.session = session;
-		});
+			});
 
 	}
 
@@ -245,7 +245,7 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 			console.log(result);
 		});
 	}
-	
+
 	// Initial retrieval of session on page load
 	$scope.getSession = function(session_id) {
 		$http.get("/api/sessions/" + session_id).success(function (response) {
@@ -259,15 +259,8 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 			console.log("User is logged in");
 
 			// Get info from response
-			var session = response.session;
 			var user_has_permission = response.has_permission;
 			var permission_requested = response.permission_requested;
-
-			// TODO: Hack: remove and find a better way to do this
-			// initialise each card with selected = 0
-			for (var card of response.session.cards) {
-				card.selected = 0;
-			}
 
 			// Populate $scope
 			$scope.user_has_permission = user_has_permission;
@@ -280,10 +273,17 @@ cardsControllers.controller('CardsCtrl', ['$scope','$http','$routeParams','$loca
 				$scope.session = {};
 			} else {
 				$scope.session = response.session;
+
+				// TODO: Hack: remove and find a better way to do this
+				// initialise each card with selected = 0
+				for (var card of $scope.session.cards) {
+					card.selected = 0;
+				}
+
 				$scope.joinSession();  // Socket connection
 			}
 			$scope.loading = 0;
-	
+
 		});
 	}
 	$scope.getSession($scope.session_id);
@@ -301,7 +301,7 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 	$scope.sessions = [];
 	$scope.new_session = {name: ''}
 	$scope.loading = 1;
-	
+
 	$scope.getSessions = function() {
 		$http.get("/api/sessions").success(function (response) {
 
@@ -328,12 +328,12 @@ cardsControllers.controller('SessionsCtrl', ['$scope','$http','$routeParams','so
 		}
 
 		$http.post('/api/sessions', session).
- 		success(function(saved_session, status, headers, config) {
-			console.log("Added session: " + JSON.stringify(saved_session));
-			$scope.sessions.push(saved_session);
-		});
+			success(function(saved_session, status, headers, config) {
+				console.log("Added session: " + JSON.stringify(saved_session));
+				$scope.sessions.push(saved_session);
+			});
 	}
-	
+
 	// TODO: Should go in it's own controller
 	$scope.logout = function() {
 		console.log("Logging out");
